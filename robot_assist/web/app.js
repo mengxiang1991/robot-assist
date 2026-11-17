@@ -3,18 +3,18 @@ const $ = id => document.getElementById(id);
 const formValue = (form, key) => form.elements.namedItem(key).value;
 const checked = (form, key) => form.elements.namedItem(key).checked;
 const dates = value => value.trim().split(/\s+/).filter(Boolean);
-let token = sessionStorage.getItem('orbit-token') || '';
+let token = sessionStorage.getItem('robot-assist-token') || '';
 let currentPage = 'home';
 let currentRun = '';
 let configs = [];
 
 const templates = {
-  model: {url:'https://example.test/v1', model:'example-model', token_env:'ORBIT_MODEL_KEY', timeout:45},
+  model: {url:'https://example.test/v1', model:'example-model', token_env:'ROBOT_ASSIST_MODEL_KEY', timeout:45},
   tool: {type:'mcp', transport:'http', url:'https://example.test/mcp', operation:'search', effect:'read'},
   flow: {name:'示例 Flow', executor:'flow', model:'my-model', tools:[], steps:[
     {type:'model', instruction:'根据输入生成摘要。'}
   ]},
-  market: {url:'https://example.test/orbit-catalog.json', token_env:'ORBIT_MARKET_KEY'}
+  market: {url:'https://example.test/robot-assist-catalog.json', token_env:'ROBOT_ASSIST_MARKET_KEY'}
 };
 
 async function request(path, payload) {
@@ -197,7 +197,7 @@ $('auth').addEventListener('click', () => {
   const value = prompt('填写服务访问令牌。本机默认可留空。', '');
   if (value === null) return;
   token = value;
-  sessionStorage.setItem('orbit-token', token);
+  sessionStorage.setItem('robot-assist-token', token);
   refreshPage().catch(error => message(error.message, true));
 });
 const configForm = $('config-form');

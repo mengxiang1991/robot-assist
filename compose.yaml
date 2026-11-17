@@ -4,11 +4,11 @@ services:
     command: ["api", "--host", "0.0.0.0"]
     ports: ["127.0.0.1:8780:8780"]
     environment:
-      ORBIT_WEB_TOKEN: "${ORBIT_WEB_TOKEN:?Set ORBIT_WEB_TOKEN}"
+      ROBOT_ASSIST_WEB_TOKEN: "${ROBOT_ASSIST_WEB_TOKEN:?Set ROBOT_ASSIST_WEB_TOKEN}"
     env_file:
       - .env
     volumes:
-      - orbit-data:/data
+      - robot-assist-data:/data
     restart: unless-stopped
   worker:
     build: .
@@ -16,7 +16,7 @@ services:
     env_file:
       - .env
     volumes:
-      - orbit-data:/data
+      - robot-assist-data:/data
     restart: unless-stopped
 volumes:
-  orbit-data:
+  robot-assist-data:

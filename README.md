@@ -7,14 +7,20 @@
 在项目目录执行以下命令。三个命令分别初始化会议室样例、启动 Worker 和启动 Web。后两个命令各占用一个终端。
 
 ```powershell
-python -m orbit.demo
-python -m orbit worker
-python -m orbit api
+python -m robot_assist.demo
+python -m robot_assist worker
+python -m robot_assist api
 ```
 
-访问 http://127.0.0.1:8780 。配置、计划及运行数据默认写入 ./data。可用 ORBIT_DATA 指向其他**本机**目录，API、Worker 和 demo 三者必须使用同一路径。
+访问 http://127.0.0.1:8780 。配置、计划及运行数据默认写入 ./data。可用 ROBOT_ASSIST_DATA 指向其他**本机**目录，API、Worker 和 demo 三者必须使用同一路径。
 
 打开「功能库 · 会议室」后填写日期、时段和房间，执行预演。在运行详情看到房间可用后点击确认，Worker 会重新检查可用性。批量模式为每个日期生成独立预演，可在运行记录逐项确认。重发同一个审批请求返回同一个提交运行。样例在 SQLite 中写入记录。
+
+## 从旧版升级
+
+先停止旧 API 和 Worker，并备份数据目录。新版将数据库命名为 `robot-assist.db`。已有安装请在服务停止后，将旧库复制为新文件名再启动。若 SQLite 仍有 WAL 文件，先用 SQLite 的备份功能生成一致的副本。Docker 部署要把数据库备份复制到新卷，或显式挂载已有卷。自定义数据目录和访问令牌请设置为 `ROBOT_ASSIST_DATA` 和 `ROBOT_ASSIST_WEB_TOKEN`。数据库里模型和工具的凭据引用仍使用原先配置的名称。
+
+升级后运行一次 `python -m robot_assist.demo` 以更新内置样例工具的脚本路径。
 
 ## 配置格式
 
@@ -25,7 +31,7 @@ python -m orbit api
   "my-model": {
     "url": "https://provider.example/v1",
     "model": "provider-model-id",
-    "token_env": "ORBIT_MODEL_KEY",
+    "token_env": "ROBOT_ASSIST_MODEL_KEY",
     "timeout": 45
   },
   "knowledge-query": {
@@ -33,7 +39,7 @@ python -m orbit api
     "transport": "http",
     "url": "https://mcp.example/mcp",
     "operation": "search_docs",
-    "token_env": "ORBIT_MCP_KEY",
+    "token_env": "ROBOT_ASSIST_MCP_KEY",
     "effect": "read",
     "schema": {"type": "object", "properties": {"query": {"type": "string"}}}
   },
@@ -66,7 +72,7 @@ CLI 或现有 Skill 可使用一个 JSON stdin/stdout 适配脚本。配置 type
 
 ## 接入已有市场
 
-市场 URL 指向返回 JSON 的目录入口，认证可配置 token_env。目录最小格式如下。真实市场字段或认证有差异时，在 orbit/__main__.py 中的市场接口处适配，接入后在 UI 浏览并将选定版本导入为工具配置草稿。
+市场 URL 指向返回 JSON 的目录入口，认证可配置 token_env。目录最小格式如下。真实市场字段或认证有差异时，在 robot_assist/__main__.py 中的市场接口处适配，接入后在 UI 浏览并将选定版本导入为工具配置草稿。
 
 ```json
 {
@@ -91,19 +97,19 @@ CLI 或现有 Skill 可使用一个 JSON stdin/stdout 适配脚本。配置 type
 
 ## Docker 与虚机
 
-Docker Compose 需要本机 Docker Engine/Compose。在项目目录创建未纳入版本控制的 .env，填入强随机 ORBIT_WEB_TOKEN 和使用到的凭据变量：
+Docker Compose 需要本机 Docker Engine/Compose。在项目目录创建未纳入版本控制的 .env，填入强随机 ROBOT_ASSIST_WEB_TOKEN 和使用到的凭据变量：
 
 ```text
-ORBIT_WEB_TOKEN=replace-with-a-long-random-token
+ROBOT_ASSIST_WEB_TOKEN=replace-with-a-long-random-token
 ```
 
 ```sh
 docker compose up -d --build
-docker compose run --rm --entrypoint python worker -m orbit.demo
+docker compose run --rm --entrypoint python worker -m robot_assist.demo
 ```
 
-打开本机页面，点「访问令牌」并填写 ORBIT_WEB_TOKEN。Compose 把控制台端口限制在宿主回环地址。
+打开本机页面，点「访问令牌」并填写 ROBOT_ASSIST_WEB_TOKEN。Compose 把控制台端口限制在宿主回环地址。
 
-虚机中把代码发布到 /opt/orbit，创建可写本地数据目录并设 ORBIT_DATA。用同一非 root 账号运行两个 systemd 服务，设置 WorkingDirectory=/opt/orbit、EnvironmentFile 和 Restart=on-failure，然后分别配置 ExecStart=/usr/bin/python3 -m orbit api 和 ExecStart=/usr/bin/python3 -m orbit worker。远程访问通过 TLS 反代并设置 ORBIT_WEB_TOKEN。停服务后再复制 SQLite 数据目录进行冷备份。
+虚机中把代码发布到 /opt/robot-assist，创建可写本地数据目录并设 ROBOT_ASSIST_DATA。用同一非 root 账号运行两个 systemd 服务，设置 WorkingDirectory=/opt/robot-assist、EnvironmentFile 和 Restart=on-failure，然后分别配置 ExecStart=/usr/bin/python3 -m robot_assist api 和 ExecStart=/usr/bin/python3 -m robot_assist worker。远程访问通过 TLS 反代并设置 ROBOT_ASSIST_WEB_TOKEN。停服务后再复制 SQLite 数据目录进行冷备份。
 
 生产扩展设计在 assistant-design.html。当前可运行版本集中在单机执行、每日计划、顺序 Flow、受限 Agent 与本地样例。通用审批、发布版本管理、真实 Skill 制品下载、消息 Hook 投递、Cron 和浏览器自动化留在后续实现；事件已经写入数据库供扩展。

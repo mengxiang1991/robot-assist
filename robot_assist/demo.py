@@ -6,7 +6,7 @@ try:
     from . import store
 except ImportError:
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-    from orbit import store
+    from robot_assist import store
 
 
 def seed():
@@ -25,6 +25,10 @@ def seed():
     with store.connect(True) as db:
         db.executemany("INSERT OR IGNORE INTO config VALUES(?,?,?)",
                        [(key, kind, store.encode(body)) for key, kind, body in configs])
+        for key, kind, body in configs[:2]:
+            previous = store.config(db, key, kind)
+            if previous.get("local_demo"):
+                db.execute("UPDATE config SET body=? WHERE id=?", (store.encode(body), key))
         existing = store.config(db, "demo-booking", "flow")
         if existing.get("tools") == ["demo-room-search", "demo-room-reserve"] and "approval" not in existing:
             existing["approval"] = "booking"

@@ -6,7 +6,7 @@ import uuid
 from contextlib import contextmanager
 from pathlib import Path
 
-DATA = Path(os.environ.get("ORBIT_DATA", "data"))
+DATA = Path(os.environ.get("ROBOT_ASSIST_DATA", "data"))
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS config (
     id TEXT PRIMARY KEY, kind TEXT NOT NULL, body TEXT NOT NULL
@@ -41,7 +41,7 @@ def new_id():
 @contextmanager
 def connect(write=False):
     DATA.mkdir(parents=True, exist_ok=True)
-    db = sqlite3.connect(DATA / "orbit.db", timeout=10)
+    db = sqlite3.connect(DATA / "robot-assist.db", timeout=10)
     db.row_factory = sqlite3.Row
     try:
         if write:

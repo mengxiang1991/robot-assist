@@ -13,7 +13,7 @@ from urllib.parse import urlsplit
 from . import engine, store, tools
 
 WEB = Path(__file__).parent / "web"
-TOKEN = os.environ.get("ORBIT_WEB_TOKEN", "")
+TOKEN = os.environ.get("ROBOT_ASSIST_WEB_TOKEN", "")
 CONFIG_KINDS = {"model", "tool", "flow", "market"}
 ID = re.compile(r"^[a-zA-Z0-9_-]{1,80}$")
 
@@ -258,7 +258,7 @@ def main():
     store.init()
     if args.role == "api":
         if args.host not in {"127.0.0.1", "localhost", "::1"} and not TOKEN:
-            parser.error("非本机监听需配置 ORBIT_WEB_TOKEN")
+            parser.error("非本机监听需配置 ROBOT_ASSIST_WEB_TOKEN")
         ThreadingHTTPServer((args.host, args.port), Handler).serve_forever()
     else:
         def schedule_loop():

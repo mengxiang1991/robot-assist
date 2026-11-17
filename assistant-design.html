@@ -437,7 +437,7 @@ except Timeout:
 persist_result_and_event(result)</pre><p>“标记已发送”与外部调用之间存在崩溃窗口；没有外部幂等或查询能力时，无法保证 exactly-once。系统选择可见的待确认状态，而非承诺绝对不重不漏。</p></div></div></section>
 <section id="delivery" class="page"><div class="hero"><div class="eyebrow">IMPLEMENTATION & OPERATIONS</div><h2>把设计变成可验收的开发任务</h2><p>按完整业务闭环切分工作，先确保任务可信，再增加编排自由度与界面复杂度。</p></div><div class="card"><h2>开发工作包与完成条件</h2><table><tr><th>工作包</th><th>交付内容</th><th>验收条件</th></tr><tr><td>基础工程</td><td>Web 布局、API、迁移、登录、配置装配、容器与虚机启动</td><td>全新数据目录可初始化；重启数据保留；健康检查区分存活与就绪</td></tr><tr><td>模型与工具</td><td>模型适配器、凭据引用、Skill 桥接、工具清单</td><td>模型返回非法结构可控失败；凭据不进入日志</td></tr><tr><td>运行核心</td><td>Run 状态机、节点、Worker 租约、执行日志</td><td>进程终止后能恢复；未知写操作不会盲目重试</td></tr><tr><td>预订闭环</td><td>解析、候选、审批、提交、查询、结果页</td><td>真实测试环境结果可核验；确认后参数不可被修改</td></tr><tr><td>计划与批量</td><td>Cron、时区、错过策略、分项结果、并发上限</td><td>重复扫描不重复入队；关闭计划有效；失败项独立处理</td></tr><tr><td>通用工作流</td><td>模板登记、表单编排、发布版本、MCP 与 CLI</td><td>新增业务模板无需修改调度器与运行中心</td></tr><tr><td>通知能力</td><td>Outbox、Webhook、签名、重试、投递日志</td><td>通知失败不改变业务成功状态；重投保持 event_id</td></tr></table></div><div class="card"><h2>关键验证矩阵</h2><table><tr><th>场景</th><th>预期结果</th></tr><tr><td>用户双击提交，或网络重试相同请求</td><td>返回同一个运行，不生成第二个有效提交</td></tr><tr><td>Worker 在提交后、写入结果前崩溃</td><td>通过外部查询恢复，或进入结果未知</td></tr><tr><td>API 在调度事务中重启</td><td>事务回滚或完整提交；同一触发时刻最多一个入队实例</td></tr><tr><td>暂停计划与到期扫描同时发生</td><td>事务内校验当前启用状态；已创建实例明确可见</td></tr><tr><td>审批时预览版本已改变</td><td>返回冲突，要求重新确认最新参数</td></tr><tr><td>批量 20 项中 3 项失败、1 项未知</td><td>逐项显示，失败可重试，未知需核验，成功项不重跑</td></tr><tr><td>工具输出包含指令或伪造授权</td><td>当作数据处理，不修改执行权限</td></tr><tr><td>Hook 连续返回错误</td><td>按策略重试后进入死信；任务结果保持不变</td></tr><tr><td>数据库备份恢复到新机器</td><td>迁移版本可识别，主密钥可用；恢复后计划先暂停并核验外部状态</td></tr></table></div><div class="two"><div class="card"><h2>运维与可观测性</h2><ul><li>日志关联 request_id、run_id、step_id、attempt。</li><li>观察排队时长、节点耗时、失败分类、未知结果数。</li><li>模型记录 Token 用量；费用仅在配置价格时估算。</li><li>存储保留策略可配置；删除日志不删除必需审计与外部编号。</li><li>升级前备份；数据库迁移不假设自动可逆。</li><li>恢复演练时禁用调度和通知，核对完成后再启用。</li></ul></div><div class="card"><h2>首期明确不做的内容</h2><ul><li>多租户计费、复杂组织权限与公开市场。</li><li>自建模型训练或本地模型集群调度。</li><li>任意代码执行平台和无限制 Agent。</li><li>跨多个预订的强事务承诺。</li><li>首期就引入 Kubernetes、分布式锁服务与复杂消息系统。</li></ul><p>这些边界用于控制开发规模；代码接口保留扩展能力。</p></div></div><div class="card"><h2>架构决策记录</h2><table><tr><th>决策</th><th>理由</th><th>重新评估条件</th></tr><tr><td>模块化单体</td><td>部署简单，统一事务，便于个人维护</td><td>独立扩容或故障隔离有明确需求</td></tr><tr><td>SQLite 起步</td><td>零数据库服务配置，支持轻量本机部署</td><td>多机 Worker、写竞争、数据规模持续增长</td></tr><tr><td>API 与 Worker 分进程</td><td>工具阻塞不会拖住管理页面</td><td>继续保留边界，可独立扩展 Worker</td></tr><tr><td>不可变工作流版本</td><td>运行可复现，计划行为可解释</td><td>不撤销；新增迁移和兼容策略</td></tr><tr><td>Outbox 预留</td><td>业务结果与通知事件不丢关联</td><td>接入外部消息系统后仍保留事务边界</td></tr></table></div></section>
 </main><script>
-const $=id=>document.getElementById(id);document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button,.page').forEach(x=>x.classList.remove('active'));b.classList.add('active');$(b.dataset.page).classList.add('active');$('title').textContent=b.textContent;window.scrollTo(0,0);});function mode(){ $('schedule').hidden=$('mode').value!=='scheduled';$('batch').hidden=$('mode').value!=='batch';}$('mode').onchange=mode;const fields=['enabled','plan','prompt','mode','zone','time','dates','policy'];try{let d=JSON.parse(localStorage.getItem('orbit-design')||'null');if(d)fields.forEach(k=>{if(d[k]!==undefined){if(k==='enabled')$(k).checked=d[k];else $(k).value=d[k];}});mode();}catch(e){}$('save').onclick=()=>{let d={};fields.forEach(k=>d[k]=k==='enabled'?$(k).checked:$(k).value);try{localStorage.setItem('orbit-design',JSON.stringify(d));$('result').textContent='演示配置已保存在当前浏览器。未创建真实调度任务。';}catch(e){$('result').textContent='浏览器不允许本地保存；当前配置仍可预览。';}};$('preview').onclick=()=>{if(!$('enabled').checked){$('result').textContent='计划已关闭，请启用后预览。';return;}if(!$('prompt').value.trim()){ $('result').textContent='请填写预订提示词。';return;}let dates=$('dates').value.split(/\s+/).filter(Boolean);if($('mode').value==='batch'&&(!dates.length||dates.some(d=>!/^\d{4}-\d{2}-\d{2}$/.test(d)||isNaN(Date.parse(d))||new Date(d).toISOString().slice(0,10)!==d))){$('result').textContent='请填写有效的批量日期，格式 YYYY-MM-DD。';return;}$('result').textContent='演示预览 · '+$('plan').value+'\n触发：'+$('mode').selectedOptions[0].textContent+($('mode').value==='scheduled'?' / 每天 '+$('time').value+' / '+$('zone').value:'')+'\n子任务：'+($('mode').value==='batch'?new Set(dates).size:1)+'\n策略：'+$('policy').value+'\n下一步：调用模型解析参数 → 校验日期与可用性 → '+($('policy').selectedIndex===0?'等待确认':'按预授权提交')+'\n当前未调用模型，未生成真实预订。';};
+const $=id=>document.getElementById(id);document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button,.page').forEach(x=>x.classList.remove('active'));b.classList.add('active');$(b.dataset.page).classList.add('active');$('title').textContent=b.textContent;window.scrollTo(0,0);});function mode(){ $('schedule').hidden=$('mode').value!=='scheduled';$('batch').hidden=$('mode').value!=='batch';}$('mode').onchange=mode;const fields=['enabled','plan','prompt','mode','zone','time','dates','policy'];try{let d=JSON.parse(localStorage.getItem('robot-assist-design')||'null');if(d)fields.forEach(k=>{if(d[k]!==undefined){if(k==='enabled')$(k).checked=d[k];else $(k).value=d[k];}});mode();}catch(e){}$('save').onclick=()=>{let d={};fields.forEach(k=>d[k]=k==='enabled'?$(k).checked:$(k).value);try{localStorage.setItem('robot-assist-design',JSON.stringify(d));$('result').textContent='演示配置已保存在当前浏览器。未创建真实调度任务。';}catch(e){$('result').textContent='浏览器不允许本地保存；当前配置仍可预览。';}};$('preview').onclick=()=>{if(!$('enabled').checked){$('result').textContent='计划已关闭，请启用后预览。';return;}if(!$('prompt').value.trim()){ $('result').textContent='请填写预订提示词。';return;}let dates=$('dates').value.split(/\s+/).filter(Boolean);if($('mode').value==='batch'&&(!dates.length||dates.some(d=>!/^\d{4}-\d{2}-\d{2}$/.test(d)||isNaN(Date.parse(d))||new Date(d).toISOString().slice(0,10)!==d))){$('result').textContent='请填写有效的批量日期，格式 YYYY-MM-DD。';return;}$('result').textContent='演示预览 · '+$('plan').value+'\n触发：'+$('mode').selectedOptions[0].textContent+($('mode').value==='scheduled'?' / 每天 '+$('time').value+' / '+$('zone').value:'')+'\n子任务：'+($('mode').value==='batch'?new Set(dates).size:1)+'\n策略：'+$('policy').value+'\n下一步：调用模型解析参数 → 校验日期与可用性 → '+($('policy').selectedIndex===0?'等待确认':'按预授权提交')+'\n当前未调用模型，未生成真实预订。';};
 
 const viewButtons = document.querySelectorAll('[data-view]');
 function openProductView(view) {
@@ -515,7 +515,7 @@ const configSchemas = {
   ],
   skill: [
     ['name', 'Skill 名称', 'text', '会议室预订'],
-    ['path', 'Worker 内 Skill 目录', 'text', '/opt/orbit/skills/meeting-booking'],
+    ['path', 'Worker 内 Skill 目录', 'text', '/opt/robot-assist/skills/meeting-booking'],
     ['version', '版本或内容摘要', 'text', 'v1'],
     ['adapter', '运行适配方式', 'select', ['现有 Skill 运行器', '指令与资源']],
     ['credential', '凭据引用（选填）', 'text', 'meeting-room-account']
@@ -533,16 +533,16 @@ const configSchemas = {
     ['name', '服务名称', 'text', '知识库'],
     ['transport', '传输方式', 'select', ['Streamable HTTP', 'stdio']],
     ['endpoint', 'MCP 端点', 'url', 'https://example.test/mcp'],
-    ['command', 'Worker 内可执行文件', 'text', '/opt/orbit/bin/knowledge-mcp'],
+    ['command', 'Worker 内可执行文件', 'text', '/opt/robot-assist/bin/knowledge-mcp'],
     ['args', '启动参数 JSON 数组', 'text', '[]'],
     ['credential', '凭据引用（选填）', 'text', 'knowledge-account'],
     ['operation', '允许使用的工具', 'text', 'search_docs']
   ],
   cli: [
     ['name', 'CLI 名称', 'text', '报告生成'],
-    ['command', 'Worker 内可执行文件', 'text', '/opt/orbit/bin/report-tool'],
+    ['command', 'Worker 内可执行文件', 'text', '/opt/robot-assist/bin/report-tool'],
     ['args', '固定参数 JSON 数组', 'text', '["summarize", "--format", "json"]'],
-    ['cwd', 'Worker 内工作目录', 'text', '/var/lib/orbit/work'],
+    ['cwd', 'Worker 内工作目录', 'text', '/var/lib/robot-assist/work'],
     ['timeout', '超时（秒）', 'number', '30']
   ]
 };
@@ -674,7 +674,7 @@ const demoCatalog = [
    fields:{transport:'Streamable HTTP',endpoint:'https://example.test/mcp',credential:'',operation:'search_docs'}},
   {kind:'mcp', id:'local-doc-search', name:'本地文档查询', versions:['1.0.0'],
    info:'本地 MCP · stdio · 需在 Worker 安装运行器',
-   fields:{transport:'stdio',command:'/opt/orbit/bin/docs-mcp',args:'[]',credential:'',operation:'search_docs'}}
+   fields:{transport:'stdio',command:'/opt/robot-assist/bin/docs-mcp',args:'[]',credential:'',operation:'search_docs'}}
 ];
 const importedDrafts = new Map();
 const savedSources = new Map();
@@ -711,7 +711,7 @@ $('market-import').onclick = () => {
   const fields = {...item.fields, name:item.name};
   if (item.kind === 'skill') {
     fields.version = version;
-    fields.path = '/opt/orbit/skills/' + item.id + '/' + version;
+    fields.path = '/opt/robot-assist/skills/' + item.id + '/' + version;
   }
   importedDrafts.set(item.kind, {fields, source:item.id + ' @ ' + version});
   renderConfig(item.kind);

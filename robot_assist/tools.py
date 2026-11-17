@@ -64,8 +64,8 @@ def chat(model, messages, tools=None):
 def process_env(tool):
     env = {key: os.environ[key] for key in ("PATH", "SYSTEMROOT", "TEMP", "TMP")
            if key in os.environ}
-    if "ORBIT_DATA" in os.environ and tool.get("local_demo"):
-        env["ORBIT_DATA"] = os.environ["ORBIT_DATA"]
+    if "ROBOT_ASSIST_DATA" in os.environ and tool.get("local_demo"):
+        env["ROBOT_ASSIST_DATA"] = os.environ["ROBOT_ASSIST_DATA"]
     for key in tool.get("env", []):
         env[key] = secret(key)
     return env
@@ -156,7 +156,7 @@ def mcp(tool, arguments, method="tools/call"):
 
         init = call("initialize", {
             "protocolVersion": "2025-06-18", "capabilities": {},
-            "clientInfo": {"name": "Orbit", "version": "0.1"},
+            "clientInfo": {"name": "Robot Assist", "version": "0.1"},
         }, 1)
         headers["MCP-Protocol-Version"] = init["protocolVersion"]
         call("notifications/initialized", {})
