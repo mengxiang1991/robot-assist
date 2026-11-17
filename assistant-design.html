@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Robot Assist · 个人助手设计</title><style>
+:root{--bg:#f3f5f8;--ink:#19263b;--muted:#748095;--line:#e3e8ef;--blue:#3867ed}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.7 system-ui,'Microsoft YaHei',sans-serif}aside{position:fixed;width:224px;height:100vh;background:#142238;color:#b7c3d8;padding:30px 20px}.brand{font-size:25px;color:white;font-weight:750;letter-spacing:2px}.tag{font-size:11px;letter-spacing:2px;color:#8b9bb4;margin-bottom:38px}nav button{display:block;width:100%;text-align:left;margin:8px 0;background:none;color:inherit;border:0;padding:13px 15px;border-radius:9px;cursor:pointer}nav button.active{background:#304a72;color:white}.foot{position:absolute;bottom:26px;font-size:12px}main{margin-left:224px;padding:35px 44px;max-width:1500px}header{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}.eyebrow{color:var(--blue);font-size:12px;letter-spacing:2px}h1{font-size:30px;margin:6px 0}h2{font-size:19px;margin:0 0 16px}h3{font-size:15px;margin:0 0 8px}p{color:#65738a;margin:6px 0 16px}.badge{background:#e7f4ef;color:#268061;padding:6px 12px;border-radius:20px;font-size:12px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.two{display:grid;grid-template-columns:1.4fr 1fr;gap:20px}.card{background:white;border:1px solid var(--line);border-radius:13px;padding:24px;margin-bottom:20px}.metric{font-size:28px;font-weight:700}.label{font-size:12px;color:var(--muted)}.hero{background:linear-gradient(115deg,#20385b,#365c90);color:white;padding:30px;border-radius:14px;margin-bottom:24px}.hero p{color:#c4d4e9}.hero h2{font-size:25px}.pill{display:inline-block;padding:4px 10px;background:#eef2fc;color:#4561a0;border-radius:6px;font-size:12px;margin:4px}button.primary{background:var(--blue);color:white;border:0;padding:11px 20px;border-radius:8px;cursor:pointer}button.secondary{background:white;color:var(--blue);border:1px solid #cad6f3;padding:10px 18px;border-radius:8px;cursor:pointer}label{display:block;margin-bottom:14px;color:#52617a}input,select,textarea{width:100%;padding:10px;border:1px solid #dbe2ec;border-radius:7px;font:inherit;background:#fff;color:var(--ink);margin-top:6px}input[type=checkbox]{width:auto}textarea{height:115px;resize:vertical}.row{display:flex;gap:15px}.row>*{flex:1}table{width:100%;border-collapse:collapse;text-align:left}td,th{padding:13px 10px;border-bottom:1px solid var(--line);font-size:13px}th{color:#718098;font-weight:500}.step{border-left:2px solid #b6c8f7;padding:0 0 20px 20px;margin-left:7px}.step b{display:block}.note{padding:12px 16px;background:#fff7e7;color:#8b6c30;border-radius:8px;font-size:12px}.page{display:none}.page.active{display:block}code{background:#eef2f8;padding:2px 5px;border-radius:4px}ul{padding-left:20px;color:#65738a}.architecture{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}.node{flex:1;min-width:160px;border:1px solid #cbd9f3;background:#f6f9ff;border-radius:10px;padding:18px}.node strong{display:block;color:#345ca3}#result{white-space:pre-wrap;padding-top:15px;color:#42638b}@media(max-width:850px){aside{position:static;width:auto;height:auto}.tag,.foot{display:none}nav{display:flex;flex-wrap:wrap}nav button{width:auto}main{margin:0;padding:22px}.grid,.two{grid-template-columns:1fr}.row{flex-direction:column}header{align-items:start;gap:10px}}
+aside{overflow-y:auto}.foot{position:static;margin-top:28px}nav button{margin:3px 0;padding:10px 15px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#142238;color:#d5e2f7;padding:22px;border-radius:10px;font:13px/1.8 Consolas,monospace} .wire{background:#f4f7fc;border:1px dashed #b7c7e4;padding:16px;border-radius:10px}.wirebar{background:#dde7f8;padding:12px;margin-bottom:14px;border-radius:6px}.wirebox{background:white;border:1px solid #dce4f1;padding:20px;border-radius:6px;margin-bottom:14px;min-height:105px}table{display:block;overflow-x:auto}td{min-width:140px} @media print{aside,header .badge{display:none}main{margin:0;padding:0}.page{display:block!important;break-before:page}.card{break-inside:avoid}body{background:white}pre{background:#f1f3f8;color:#19263b}}
+.product{background:white;border:1px solid var(--line);border-radius:16px;overflow:hidden}.product-top,.product-head{display:flex;justify-content:space-between;gap:12px;align-items:center}.product-top{padding:16px 22px;background:#edf3ff;border-bottom:1px solid var(--line)}.product-top span{color:#536785;font-size:12px}.product-layout{display:grid;grid-template-columns:155px minmax(0,1fr)}.product-nav{padding:12px;background:#f8faff;border-right:1px solid var(--line)}.product-nav button,.ui-flow button{display:block;width:100%;border:1px solid transparent;text-align:left;background:transparent;color:var(--ink);padding:10px;font:inherit;cursor:pointer;border-radius:7px}.product-nav button[aria-pressed=true],.ui-flow button[aria-pressed=true]{background:#e4edff;color:#224ca8;border-color:#cedcff}.product-content{padding:22px;min-height:360px}.product-head{margin-bottom:18px}.product-head h2,.product-head p{margin:0}.ui-box{padding:16px;border:1px solid var(--line);border-radius:9px;background:#f9fbfe;min-width:0}.ui-label{margin-top:22px}.chip{border-radius:12px;padding:3px 9px;display:inline-block;white-space:nowrap}.amber{background:#fff0ce;color:#805409}.green{background:#e2f5e9;color:#226444}.ui-flow span{display:block;text-align:center;color:#536785}.ui-flow button{border-color:var(--line);background:white}.diagram-index{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}.diagram-index a{background:white;border:1px solid var(--line);border-radius:8px;padding:8px 14px;color:#284e9d}.diagram{scroll-margin-top:20px}.graph{display:grid;gap:7px;text-align:center;margin-bottom:14px}.graph-node{background:#eaf0ff;color:#183467;padding:10px;border-radius:8px;border:1px solid #cbd9f4;font-weight:650;overflow-wrap:anywhere}.graph-node.data{background:#e3f2ec;border-color:#bfded0;color:#1c5943}.graph-node.ext{background:#f4eef9;border-color:#e1d4ef;color:#533b6c}.graph-edge{color:#4d5f7a;font-size:13px}.graph-row{display:flex;gap:10px}.graph-row>*{flex:1;min-width:0}.graph-boundary{background:#f8faff;border:1px dashed #a5b8d5;border-radius:9px;padding:12px}.graph-boundary b{display:block;margin-bottom:10px}.graph-boundary .graph-edge{margin:7px 0}.sequence td:first-child{min-width:48px}.sequence td:last-child{width:70%}
+@media(max-width:1050px){.product-layout{grid-template-columns:1fr}.product-nav{display:flex;flex-wrap:wrap;border-right:0;border-bottom:1px solid var(--line);gap:5px}.product-nav button{width:auto}.product-content .grid{grid-template-columns:1fr}}@media(max-width:620px){.graph-row{flex-direction:column}.product-head,.product-top{align-items:start;flex-wrap:wrap}.product-content{padding:14px}}
+
+.sequence-scroll{overflow-x:auto}.sequence-chart{min-width:760px;padding-bottom:12px}.sequence-head{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;text-align:center}.sequence-head b{padding:8px 3px;border-radius:6px;background:#eaf0ff;color:#183467}.sequence-row{display:grid;grid-template-columns:repeat(10,1fr);min-height:56px;background:repeating-linear-gradient(to right,transparent 0,transparent calc(10% - 1px),#cbd9ed calc(10% - 1px),#cbd9ed 10%,transparent 10%,transparent 20%)}.sequence-message{align-self:center;position:relative;text-align:center;font-size:12px;background:#fff;color:#284773;border-bottom:2px solid #6487c6;padding:1px 0 4px}.sequence-message:after{content:'';position:absolute;bottom:-5px;border:4px solid transparent}.sequence-message.right:after{right:-4px;border-left-color:#6487c6}.sequence-message.left:after{left:-4px;border-right-color:#6487c6}
+[data-config][aria-pressed=true]{background:#e4edff;border-color:#8ba9eb;font-weight:700}#tool-journeys,[id^=journey-]{scroll-margin-top:18px}#config-status{margin:12px 0 0}#config-fields [hidden]{display:none}#market-panel{margin-bottom:14px}#market-panel[hidden]{display:none}#market-panel summary{cursor:pointer;font-weight:700}#config-source{color:#395786}
+:root{--bg:#eef2f8;--ink:#152541;--blue:#3059d9}
+aside{background:#101b30}main{max-width:1680px}.product{box-shadow:0 14px 45px #10234412}.product-top{background:#fff;padding:18px 22px}.product-top strong{font-size:19px;letter-spacing:.3px}.product-content{background:#fbfcff}.product-nav{background:#f4f7fc}
+.workspace-hero{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:24px 25px;background:linear-gradient(120deg,#172c55,#284c8a);color:#fff;border-radius:13px}.workspace-hero h2{font-size:27px;line-height:1.2;margin:0 0 9px}.workspace-hero p{margin:0;color:#d7e3fa}.workspace-hero button{background:#fff;color:#183666;flex-shrink:0;font-weight:700}
+.workspace-stats,.library-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:16px 0}.workspace-stat,.workspace-block,.feature-tile{border:1px solid #e2e9f3;border-radius:12px;background:#fff;padding:15px 17px;min-width:0}.workspace-stat b{display:block;font-size:24px;line-height:1.3;margin:6px 0}.workspace-stat span,.workspace-stat small,.activity small{color:#5e6e86;display:block}.workspace-columns{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:12px}.workspace-block h3{font-size:16px;margin-bottom:9px}.activity{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-top:1px solid #edf0f6}.activity div:first-child{flex:1}.text-button,.jump-button{border:0;background:transparent;color:#2b52bc;cursor:pointer;font:inherit}.jump-button{display:flex;justify-content:space-between;width:100%;text-align:left;padding:10px 0;border-top:1px solid #edf0f6}.feature-tile{display:flex;flex-direction:column;align-items:flex-start}.feature-tile button{margin-top:auto}.feature-icon{background:#e9efff;border-radius:9px;padding:4px 12px;color:#3059d9;font-size:21px;margin-bottom:10px}
+@media(max-width:1100px){.workspace-columns{grid-template-columns:1fr}}@media(max-width:680px){.workspace-hero{align-items:flex-start;flex-direction:column}.workspace-stats,.library-grid{grid-template-columns:1fr}.activity{flex-wrap:wrap}}
+.booking-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:auto}.booking-actions button{padding:7px 10px}</style></head><body><aside><div class="brand">◈ Robot Assist</div><div class="tag">PERSONAL AGENT HUB</div><nav><button class="active" data-page="prototype">产品 UI 原型</button><button data-page="blueprint">平台详细设计</button><button data-page="extensions">功能扩展方案</button><button data-page="diagrams">四张架构图</button><button data-page="deploydeps">部署依赖</button><button data-page="overview">总览与产品定位</button><button data-page="booking">会议室预订</button><button data-page="workflow">工作流与调度</button><button data-page="integrations">模型与工具中心</button><button data-page="architecture">架构与部署</button><button data-page="roadmap">实施路线</button><button data-page="journeys">用户旅程</button><button data-page="pages">页面方案与交互</button><button data-page="framework">代码框架与目录</button><button data-page="codearch">代码架构与契约</button><button data-page="delivery">实施与验收</button></nav><div class="foot">DESIGN PROPOSAL · V4.0<br>本地优先 / 按需扩展</div></aside><main><header><div><div class="eyebrow">YOUR AUTOMATION WORKSPACE</div><h1 id="title">产品 UI 原型</h1><p>把一句话，变成可追踪、可重复执行的任务。</p></div><span class="badge">交互设计稿 · 无后端连接</span></header>
+
+<section id="prototype" class="page active">
+<div class="product">
+  <div class="product-top"><strong>◈ Robot Assist</strong><span>个人工作空间 / 原型</span></div>
+  <div class="product-layout">
+  <div class="product-nav" aria-label="原型导航">
+    <button data-view="dash" aria-pressed="true">工作台</button>
+    <button data-view="library" aria-pressed="false">功能库</button>
+    <button data-view="editor" aria-pressed="false">Flow 编排</button>
+    <button data-view="plans" aria-pressed="false">定时计划</button>
+    <button data-view="run" aria-pressed="false">运行详情</button>
+    <button data-view="settings" aria-pressed="false">配置中心</button>
+  </div>
+  <div class="product-content">
+    <div id="ui-dash" class="ui-panel">
+      <div class="workspace-hero">
+        <div><h2>任务工作台</h2><p>运行你的任务、处理待确认事项，并查看自动化计划。</p></div>
+        <button class="primary" data-open-view="library">从功能库新建任务 <span aria-hidden="true">→</span></button>
+      </div>
+      <div class="workspace-stats">
+        <div class="workspace-stat"><span>待处理</span><b id="ui-dash-pending">1</b><small>需要确认的外部操作</small></div>
+        <div class="workspace-stat"><span>已完成</span><b>3</b><small>最近一次运行周期</small></div>
+        <div class="workspace-stat"><span>下次触发</span><b>周五 09:00</b><small>Asia/Shanghai</small></div>
+      </div>
+      <div class="workspace-columns">
+        <div class="workspace-block"><h3>最近运行</h3>
+          <div class="activity"><div><b>团队周会</b><small>会议室预订 · 手工</small></div><span id="ui-dash-status" class="chip amber">待确认</span><button class="text-button" data-open-view="run">查看</button></div>
+          <div class="activity"><div><b>知识库周摘要</b><small>文档检索与整理 · 定时 · 扩展示例</small></div><span class="chip green">示例完成</span></div>
+          <div class="activity"><div><b>培训场地</b><small>会议室预订 · 批量</small></div><span class="chip green">3 项完成</span></div>
+        </div>
+        <div class="workspace-block"><h3>常用操作</h3>
+          <button class="jump-button" data-open-view="editor">查看 Flow 节点 <span>→</span></button>
+          <button class="jump-button" data-open-view="plans">管理定时计划 <span>→</span></button>
+          <button class="jump-button" data-open-view="settings">配置模型和工具 <span>→</span></button>
+          <button class="jump-button" data-open-page="extensions">了解如何新增功能 <span>→</span></button>
+        </div>
+      </div>
+    </div>
+    <div id="ui-library" class="ui-panel" hidden>
+      <div class="product-head"><div><h2>功能库</h2><p>选择业务模板，或从空白 Flow 创建新的任务。</p></div></div>
+      <div class="library-grid">
+        <article class="feature-tile"><span class="feature-icon">▦</span><h3>会议室预订</h3><p>用提示词查询并预订会议室。支持手工、定时和批量。</p><div class="booking-actions"><button class="primary" data-open-view="reserve">手工预订</button>
+<button class="secondary" data-open-page="booking" data-booking-mode="scheduled">定时计划</button>
+<button class="secondary" data-open-page="booking" data-booking-mode="batch">批量预订</button></div></article>
+        <article class="feature-tile"><span class="feature-icon">≡</span><h3>知识库摘要</h3><p>扩展示例。调用市场导入的 MCP 查询文档，用模型生成周期摘要。</p><button class="secondary" data-open-page="extensions">查看扩展示例</button></article>
+        <article class="feature-tile"><span class="feature-icon">＋</span><h3>自定义任务</h3><p>用模型、Skill、MCP 或 CLI 节点组合一个新的 Flow。</p><button class="secondary" data-open-view="settings" data-open-config="flow">打开 Flow 配置</button></article>
+      </div>
+    </div>
+    <div id="ui-reserve" class="ui-panel" hidden>
+      <div class="product-head"><div><h2>手工预订会议室</h2><p>按需发起一次预订。输入需求、核对候选和时段，再确认提交。</p></div></div>
+      <div class="diagram-index" aria-label="手工预订步骤"><span class="chip green">1 输入需求</span><span class="chip green">2 核对候选</span><span class="chip green">3 确认提交</span></div>
+      <div class="two"><div class="ui-box"><label>预订需求<textarea id="ui-prompt">下周一上午 10 点，给 8 人预订一个有投屏的房间，开会一小时。</textarea></label><label>时区<select><option>Asia/Shanghai</option></select></label><button class="primary" id="ui-preview">查看示例预览</button> <button class="secondary" data-open-page="booking">查看全部预订选项</button><p id="ui-preview-hint" role="status"></p></div>
+      <div class="ui-box"><h3>候选与参数</h3><p id="ui-preview-empty">生成预览后查看参数展示效果。</p><div id="ui-preview-result" hidden><p>固定示例 · 11 月 23 日 10:00–11:00</p><b>A301 · 10 人 · 支持投屏</b><p>提交策略：需要确认</p><button class="primary" data-open-view="run">查看待确认运行</button></div></div></div>
+    </div>
+    <div id="ui-editor" class="ui-panel" hidden>
+      <div class="product-head"><div><h2>会议室预订工作流</h2><p>版本 1 · 点击节点查看参数和失败策略。</p></div><button class="secondary" data-open-page="workflow">编排设计说明</button></div>
+      <div class="two"><div class="ui-box ui-flow"><button data-node="parse" aria-pressed="true">解析需求 · 模型</button><span>↓</span><button data-node="search" aria-pressed="false">查询房间 · Skill</button><span>↓</span><button data-node="approval" aria-pressed="false">确认策略 · 守卫</button><span>↓</span><button data-node="submit" aria-pressed="false">提交与核验 · Skill</button></div><div class="ui-box"><h3>节点属性</h3><p id="ui-node-detail" role="status">解析需求：使用配置的模型，把提示词转换为日期、时段、人数和设备条件。缺少必填字段时等待补充。</p></div></div>
+    </div>
+    <div id="ui-plans" class="ui-panel" hidden>
+      <div class="product-head"><div><h2>定时计划</h2><p>管理触发时间、预订目标和暂停状态。</p></div><button class="primary" data-open-page="booking">编辑演示配置</button></div>
+      <table><tr><th>计划</th><th>触发时间</th><th>会议时间</th><th>状态</th><th>操作</th></tr><tr><td>团队周会</td><td>每周五 09:00</td><td>下周一 10:00–11:00</td><td id="ui-plan-status" role="status">已启用</td><td><button class="secondary" id="ui-plan-toggle" aria-pressed="false">暂停</button></td></tr></table>
+    </div>
+    <div id="ui-run" class="ui-panel" hidden>
+      <div class="product-head"><div><h2>团队周会</h2><p>运行 #1042 · 手工触发</p></div><span id="ui-run-status" class="chip amber" role="status">待确认</span></div>
+      <div class="two"><div class="ui-box"><h3>执行时间线</h3><div class="step"><b>解析需求 · 成功</b>日期与设备条件已校验</div><div class="step"><b>查询房间 · 成功</b>A301，11 月 23 日 10:00–11:00</div><div class="step"><b id="ui-run-step">提交预订 · 等待确认</b>写操作需确认最终参数</div></div><div class="ui-box"><h3>确认参数</h3><p>会议室 A301 · 8 人 · 需要投屏</p><button class="primary" id="ui-confirm">模拟确认提交</button> <button class="secondary" id="ui-reset">重置演示</button></div></div>
+    </div>
+    <div id="ui-settings" class="ui-panel" hidden>
+      <div class="product-head"><div><h2>配置中心</h2><p>内置 Agent 使用这里配置的模型。保存模型后，可在 Flow 选择执行方式、模型和工具。请使用示例值。</p></div><button class="secondary" data-journey="tool-journeys">查看配置旅程</button></div>
+      <div class="diagram-index"><button class="secondary" data-config="model" aria-pressed="true">模型</button><button class="secondary" data-config="skill" aria-pressed="false">Skill</button><button class="secondary" data-config="flow" aria-pressed="false">Flow</button><button class="secondary" data-config="mcp" aria-pressed="false">MCP</button><button class="secondary" data-config="cli" aria-pressed="false">CLI</button></div>
+      <details class="ui-box" id="market-panel">
+        <summary>从我的市场导入 Skill 或 MCP</summary>
+        <p>下面是市场条目的示例。正式接入使用你已有的市场地址和认证方式。</p>
+        <div class="row"><label>类型<select id="market-kind"><option value="skill">Skill</option><option value="mcp">MCP</option></select></label>
+        <label>搜索<input id="market-search" type="search" placeholder="输入名称或 ID"></label></div>
+        <div class="row"><label>市场条目<select id="market-item"></select></label><label>版本<select id="market-version"></select></label></div>
+        <p id="market-info"></p>
+        <button type="button" class="primary" id="market-import">填入配置草稿</button>
+        <button type="button" class="secondary" data-journey="journey-market">查看市场接入旅程</button>
+      </details>
+      <form class="ui-box" id="tool-config">
+        <h3 id="config-title"></h3>
+        <p id="config-source" hidden></p><div id="config-fields"></div>
+        <button class="secondary" type="button" id="config-check">校验字段</button>
+        <button class="primary" type="submit">保存演示配置</button>
+        <button class="secondary" type="button" id="config-journey">查看此项旅程</button>
+        <p id="config-status" role="status"></p>
+      </form>
+    </div>
+  </div></div>
+</div></section>
+
+<section id="diagrams" class="page">
+<div class="diagram-index"><a href="#diagram-system">01 系统总览</a><a href="#diagram-deploy">02 部署拓扑</a><a href="#diagram-run">03 执行时序</a><a href="#diagram-code">04 代码依赖</a></div>
+<figure id="diagram-system" class="card diagram"><figcaption><h2>01 · 系统总览</h2></figcaption>
+<div class="graph"><div class="graph-node">浏览器 · Web 控制台</div><div class="graph-edge">↓ HTTPS · REST / 运行事件</div><div class="graph-node">管理服务 · 配置 / 鉴权 / 调度</div><div class="graph-edge">↓ 入队　↑ 查询状态</div><div class="graph-node data">SQLite · 配置 / 任务队列 / Outbox</div><div class="graph-edge">↓ 领取任务　↑ 写入结果</div><div class="graph-node">独立 Worker · DAG / Agent 执行器</div><div class="graph-edge">↓ 调模型　　↓ 调工具　　↓ 派送事件</div><div class="graph-row"><div class="graph-node ext">模型 API</div><div class="graph-node ext">Skill / MCP / CLI</div><div class="graph-node ext">Webhook 接收方（后续）</div></div></div>
+<p>管理服务与 Worker 通过数据库交接任务，浏览器关掉后任务仍可运行。Webhook 在后续阶段由事件派送器处理。</p></figure>
+<figure id="diagram-deploy" class="card diagram"><figcaption><h2>02 · 部署拓扑</h2></figcaption>
+<div class="graph"><div class="graph-node">个人电脑 · 浏览器</div><div class="graph-edge">↓ 本机或内网访问 · 可选 TLS 反向代理</div><div class="graph-row"><div class="graph-boundary"><b>方式 A · 同一台主机运行 Docker Compose</b><div class="graph-row"><div class="graph-node">API 容器</div><div class="graph-node">Worker 容器</div></div><div class="graph-edge">↕ 共享本机数据卷</div><div class="graph-node data">SQLite + 文件 · 密钥独立挂载</div></div><div class="graph-boundary"><b>方式 B · 一台 Linux 虚机</b><div class="graph-row"><div class="graph-node">API systemd 服务</div><div class="graph-node">Worker systemd 服务</div></div><div class="graph-edge">↕ 共享本机目录</div><div class="graph-node data">SQLite + 文件 · 密钥单独保管</div></div></div><div class="graph-edge">↓ 两种部署下，执行器按配置出站连接</div><div class="graph-row"><div class="graph-node ext">模型服务</div><div class="graph-node ext">会议室系统 / MCP 服务</div></div></div>
+<p>两种方式选一种。数据库文件随 API 和 Worker 放在同一台机器的本地存储上。</p><button class="secondary" data-open-page="deploydeps">查看部署依赖明细</button></figure>
+<figure id="diagram-run" class="card diagram"><figcaption><h2>03 · 会议室预订执行时序</h2></figcaption>
+<div class="sequence-scroll"><div class="sequence-chart" aria-label="会议室预订消息时序图"><div class="sequence-head"><b>用户 / 调度器</b><b>API / Worker</b><b>模型 API</b><b>Skill / 会议室</b><b>数据库 / Outbox</b></div><div class="sequence-row"><div class="sequence-message right" style="grid-column:2/4">01 · 手工、定时或批量发起</div></div><div class="sequence-row"><div class="sequence-message right" style="grid-column:4/10">02 · 保存运行与输入快照</div></div><div class="sequence-row"><div class="sequence-message right" style="grid-column:4/6">03 · 解析日期、时段、人数和设备</div></div><div class="sequence-row"><div class="sequence-message right" style="grid-column:4/8">04 · 查询候选会议室</div></div><div class="sequence-row"><div class="sequence-message right" style="grid-column:2/4">05 · 确认参数（自动计划校验预授权）</div></div><div class="sequence-row"><div class="sequence-message right" style="grid-column:4/8">06 · 复查可用性，提交并核验</div></div><div class="sequence-row"><div class="sequence-message right" style="grid-column:4/10">07 · 保存结果并记录事件</div></div><div class="sequence-row"><div class="sequence-message left" style="grid-column:2/4">08 · 控制台读取最新结果</div></div></div></div><p>后续启用 Webhook 后，派送器从 Outbox 读取事件并独立重试通知。</p>
+<p>提交请求超时后先查询外部结果。无法判断是否已经预订时，运行进入待核验。</p></figure>
+<figure id="diagram-code" class="card diagram"><figcaption><h2>04 · 代码模块依赖</h2></figcaption>
+<div class="graph"><div class="graph-node">entrypoints · 装配 API、调度器和 Worker</div><div class="graph-edge">↓ 装配用例与适配器</div><div class="graph-row"><div class="graph-node">application / runtime<br>用例与工作流执行</div><div class="graph-node ext">adapters<br>SQLite、模型、Skill、MCP、CLI、Hook</div></div><div class="graph-edge">↘ 调用接口　　　　　↙ 实现接口</div><div class="graph-node data">ports · Repository / ModelPort / ToolPort</div><div class="graph-edge">↓ 使用领域类型</div><div class="graph-node data">domain · Run / Schedule / Policy</div></div>
+<p>应用层同时调用领域规则。预订扩展提供会议室专用输入与结果映射，通用调度和队列继续由平台核心负责。</p></figure></section>
+
+<section id="deploydeps" class="page">
+<div class="card"><h2>本地启动 · HTML 设计稿</h2>
+<p>可直接打开 HTML，或用 Python 3 标准库启动本地 HTTP 预览。</p>
+<pre>cd D:\Project\robot-assist
+python -m http.server 8765 --bind 127.0.0.1</pre>
+<p>浏览器打开 <a href="http://127.0.0.1:8765/assistant-design.html">本地预览</a>。在运行命令的终端按 Ctrl+C 停止。端口已占用时可更换端口和访问地址。</p></div>
+<div class="card"><h2>正式应用 · 本地开发启动顺序</h2>
+<table><tr><th>步骤</th><th>操作</th><th>前置依赖</th></tr>
+<tr><td>初始化</td><td>安装锁定依赖，配置环境，执行数据库迁移</td><td>Python 虚拟环境、本地数据目录、主密钥文件</td></tr>
+<tr><td>API</td><td>独立启动，开发时可监听 127.0.0.1:8000</td><td>迁移完成、数据目录可读写</td></tr>
+<tr><td>Worker</td><td>独立启动，使用与 API 一致的数据库设置</td><td>模型连通、Skill 所需运行环境、共享本机 SQLite 文件</td></tr>
+<tr><td>Web</td><td>开发时由 Vite 代理 API，发布时由 API 托管静态资源</td><td>开发热更新需要 Node.js，发布包需要包含前端构建产物</td></tr></table>
+<p>当前交付为 HTML 原型。正式 API、Worker、数据库迁移与启动脚本待实现。</p></div>
+
+<div class="card"><h2>按部署方式准备</h2><table><tr><th>依赖</th><th>Docker Compose</th><th>Linux 虚机</th></tr>
+<tr><td>宿主运行环境</td><td>Docker Engine 和 Compose；可拉取或导入应用镜像</td><td>支持 systemd 的 Linux；安装与发布包兼容的 Python 和虚拟环境</td></tr>
+<tr><td>应用依赖</td><td>镜像内包含 Python、锁定的运行库和已构建 Web 资源；API 与 Worker 可共用镜像</td><td>发布包包含 Web 静态资源；按锁文件安装 Python 运行库，分别注册 API 和 Worker 服务</td></tr>
+<tr><td>数据库与目录</td><td>本机持久卷由两服务共享；首次启动前运行一次迁移</td><td>本机数据目录授予服务账号访问权限；首次启动前运行一次迁移</td></tr>
+<tr><td>凭据</td><td>单独挂载主密钥文件；配置模型与 Skill 的凭据引用</td><td>主密钥放受限文件，systemd 注入文件路径；同样配置凭据引用</td></tr>
+<tr><td>网络与时间</td><td>配置管理端口映射及容器出站；容器提供时区数据</td><td>配置监听地址、防火墙及出站；保持系统时钟同步</td></tr></table></div>
+<div class="card"><h2>外部服务与可选组件</h2><table><tr><th>依赖</th><th>何时需要</th><th>上线前核对</th></tr>
+<tr><td>模型 API</td><td>需要提示词解析或运行 AI 节点时</td><td>访问地址、模型标识、密钥、网络连通和最小调用测试</td></tr>
+<tr><td>现有会议室 Skill</td><td>启用真实预订时</td><td>运行器、账号、内网或 VPN、查询与提交能力；若需要浏览器或 CLI，把对应运行依赖交付给 Worker</td></tr>
+<tr><td>MCP / CLI</td><td>所用工作流引用对应工具时</td><td>远端 MCP 验证可达性与认证；stdio MCP 或 CLI 按清单安装运行时与二进制</td></tr>
+<tr><td>TLS 反向代理</td><td>需要通过域名或远程 HTTPS 访问控制台时</td><td>域名解析、证书、代理超时及事件流支持</td></tr>
+<tr><td>Webhook 接收端</td><td>启用后续通知能力时</td><td>地址可达、验签和事件去重</td></tr>
+<tr><td>Node.js 与 Web 构建工具</td><td>从源码构建前端时</td><td>按项目锁文件构建；使用内含 Web 资源的镜像或发布包时，宿主可省去这套工具</td></tr></table>
+<p>首期使用内嵌 SQLite 和数据库任务队列，Redis、PostgreSQL 和 Kubernetes 均可省去。</p></div>
+<div class="card"><h2>启动与验收顺序</h2><ol><li>准备数据目录、主密钥与访问地址。确认模型和会议室服务的出站路径。</li><li>执行数据库迁移，再启动 API 和 Worker。检查 Web 登录、数据库读写与 Worker 心跳。</li><li>在配置中心完成模型连接测试与 Skill 只读探测。</li><li>手工检查一次预订预览及运行记录，再启用定时计划。</li><li>验证重启后配置和运行记录仍在，并留存数据库一致性备份与主密钥恢复方式。</li></ol><p>镜像、安装包和部署命令待实现后确定。会议室 Skill 的具体系统依赖以现有 Skill 的运行说明为准。</p></div>
+</section>
+
+<section id="blueprint" class="page">
+<div class="hero"><h2>个人助手平台详细设计</h2><p>平台提供模型接入、内置 Agent、工具接入、Flow、调度和运行管理。会议室预订是首个业务模板。</p></div>
+<div class="card"><h2>产品结构与需求落点</h2><table><tr><th>模块</th><th>职责</th><th>入口</th><th>首期交付</th></tr>
+<tr><td>功能库</td><td>业务模板的发现、配置和任务入口</td><td>产品原型 → 功能库</td><td>会议室模板、空白 Flow；以第二个模板验证扩展</td></tr>
+<tr><td>模型与 Agent</td><td>配置推理服务；Worker 内置执行循环</td><td>配置中心 → 模型、Flow → 执行方式</td><td>默认模型、运行级用量、固定 Flow 与受限 Agent 节点</td></tr>
+<tr><td>工具中心</td><td>从用户市场引入 Skill 与 MCP；登记 CLI</td><td>配置中心 → 市场 / 工具</td><td>版本导入、环境检查、工具发现、只读试跑、启用</td></tr>
+<tr><td>Flow 与计划</td><td>构造任务步骤、保存不可变发布版本、定时触发</td><td>Flow 编排、定时计划</td><td>表单编排、输入映射、分支、审批、手工/定时/批量</td></tr>
+<tr><td>运行与运维</td><td>进度、结果、异常恢复、部署与备份</td><td>运行中心、系统配置</td><td>运行与节点日志、重启恢复、本地 SQLite、Docker 和虚机</td></tr>
+<tr><td>消息通知</td><td>事件筛选、签名投递、重试和追踪</td><td>配置中心 → Hook</td><td>首期保存事件；后续开放投递配置</td></tr></table></div>
+<div class="card"><h2>首次就绪与日常运行</h2><ol>
+<li><b>准备运行环境。</b>初始化本地存储、凭据密钥和服务账号，启动管理服务与 Worker。页面分别显示 API、数据库与 Worker 是否就绪。</li>
+<li><b>配置推理与市场。</b>填模型地址、ID 和凭据引用，测试模型能力；设置已有市场的目录入口与认证。在来源页确认访问与获取制品的权限。</li>
+<li><b>装配功能。</b>选择业务模板或新建 Flow。从市场导入 Skill/MCP，或使用已登记的 CLI。补齐本机路径、凭据、输入输出映射和权限，试跑后启用。</li>
+<li><b>发布和调度。</b>调试 Flow 后发布不可变版本。用手工运行核对结果，再创建计划，确认时区、下次触发、并发、补跑和自动授权。</li>
+<li><b>处理异常。</b>在工作台处理审批、待输入和未知结果；运行详情提供失败节点、外部编号、重新核验及允许的重试操作。</li></ol>
+<div class="row"><button class="secondary" data-open-page="prototype">查看工作台原型</button><button class="secondary" data-open-page="journeys">查看分角色旅程</button><button class="secondary" data-open-page="deploydeps">查看依赖与启动</button></div></div>
+<div class="card"><h2>内置 Agent 如何实现</h2><p>Worker 持有执行上下文和允许的工具，把当前任务、历史结果和工具 Schema 交给所选模型。模型返回最终输出、补充问题或一个工具调用建议。Worker 验证建议并执行，直到满足输出要求或达到运行预算。</p>
+<table><tr><th>阶段</th><th>Worker 的行为</th><th>持久化记录</th></tr>
+<tr><td>创建</td><td>解析默认模型与工具版本，锁定 Flow、执行策略与业务输入</td><td>运行快照保存最终解析出的版本、参数和触发基准</td></tr>
+<tr><td>推理</td><td>检查时间、Token 与步数预算，按模型能力选择结构化输出或工具调用</td><td>调用耗时、用量、模型标识和脱敏结果</td></tr>
+<tr><td>工具决策</td><td>核验工具在当前 Flow 的白名单、输入类型、操作权限和输出边界</td><td>调用参数摘要、节点执行 ID、审批状态</td></tr>
+<tr><td>暂停与续跑</td><td>缺输入或需审批时存检查点、释放 Worker；恢复时核验身份、参数摘要和剩余预算</td><td>检查点、审批记录、已经完成的工具调用</td></tr>
+<tr><td>结束</td><td>校验输出 Schema；遇到超预算、取消或不明确的外部写结果时记录相应状态</td><td>业务结果、外部编号、终止原因与事件</td></tr></table>
+<p>会议室首期使用确定性 Flow，将模型限制在结构化解析节点。以后可以在同一 Flow 加 Agent 节点，例如在多个只读工具之间选择检索路径。所有节点共用同一权限检查和结果记录。</p></div>
+<div class="card"><h2>统一配置、版本与状态</h2><table><tr><th>资源</th><th>保存与发布</th><th>变更影响</th></tr>
+<tr><td>模型配置</td><td>名称、提供方、地址、模型 ID、能力与凭据引用。保存后可连接测试，再设为默认。</td><td>默认值变化影响以后新运行。正在运行的任务使用快照中的模型配置版本。</td></tr>
+<tr><td>市场来源</td><td>服务地址、认证引用、目录及制品获取适配。测试分别返回目录和下载状态。</td><td>停用后停止新的发现和导入。已安装版本仍按本机状态提供。</td></tr>
+<tr><td>工具版本</td><td>记录来源、版本、摘要、操作 Schema、读写性质、依赖与权限。测试通过后启用。</td><td>版本升级并行安装。管理员可紧急禁用，执行器在新调用前重新检查权限。</td></tr>
+<tr><td>Flow 与模板</td><td>草稿可编辑；发布固定输入输出、节点图、工具与策略引用。</td><td>计划选择具体发布版本。复制模板生成独立草稿，可更新或回滚到已有版本。</td></tr>
+<tr><td>定时计划</td><td>保存 Flow 版本、输入、触发时间、时区、授权范围、补跑与并发策略。</td><td>暂停仅阻止未来触发。已入队运行单独取消。批量子项各有记录。</td></tr></table>
+<p>凭据值单独加密，由配置引用解析。运行快照不包含明文凭据。凭据轮换后按引用取当前有效密钥，审计记录引用与密钥版本。</p></div>
+<div class="card"><h2>服务接口与实现顺序</h2><table><tr><th>资源</th><th>建议接口</th><th>后端职责</th></tr>
+<tr><td>模型</td><td>GET /models · POST /models · POST /models/{id}/test</td><td>保存配置引用，异步探测服务能力</td></tr>
+<tr><td>市场</td><td>GET /market/sources/{id}/items · GET /market/items/{id}/versions · POST /market/imports</td><td>适配市场接口。版本导入为异步任务，返回任务 ID 和状态</td></tr>
+<tr><td>工具</td><td>GET /tools · POST /tools/{id}/probe · POST /tool-versions/{id}/enable</td><td>验证运行环境、发现 MCP 工具、启用明确版本</td></tr>
+<tr><td>模板和 Flow</td><td>GET /templates · POST /workflows · POST /workflows/{id}/validate · POST /workflows/{id}/publish</td><td>实例化模板，校验节点图与引用，固定版本</td></tr>
+<tr><td>运行和调度</td><td>POST /runs · GET /runs/{id}/events · POST /schedules/preview</td><td>事务入队、任务状态反馈、触发时间预览及控制</td></tr></table>
+<p>建议资源统一挂在 <code>/api/v1</code> 下。实现顺序为基础存储和任务队列 → 模型与 Worker → 市场和工具 → Flow 和调度 → 首个业务模板 → 扩展验证。市场接口与会议室 Skill 的实际能力需对照现有系统确认，两个适配器可以先用测试替身验证平台闭环。</p></div>
+<div class="card"><h2>发布验收</h2><ul>
+<li>干净环境部署后，通过 Web 配置模型；从市场导入指定版本的 Skill 和 MCP，并能分别验证运行环境和工具发现。</li>
+<li>通过 CLI 节点传入受约束参数并解析输出；通过 Agent 节点使用已授权工具，调试记录能解释为什么结束或暂停。</li>
+<li>会议室模板完成手工、定时、批量预订；重复触发、外部超时、换版本及关闭计划都有可复现的结果。</li>
+<li>新增知识库摘要时复用配置中心、Flow、调度和运行记录；Docker 与虚机都能恢复备份并启动。</li>
+</ul><button class="secondary" data-open-page="delivery">查看实施工作包和测试矩阵</button></div>
+</section>
+<section id="extensions" class="page">
+<div class="hero"><h2>如何新增业务功能</h2><p>功能库展示模板，Flow 描述步骤，工具提供能力，Worker 统一执行。按新增需求的差异决定要写多少代码。</p></div>
+<div class="card"><h2>扩展点和代码位置</h2><table><tr><th>变化</th><th>实现位置</th><th>具体改动</th></tr>
+<tr><td>复用已有模型和工具完成一个新任务</td><td><code>templates/&lt;feature-id&gt;/</code></td><td>新增模板清单、输入输出 Schema、Flow 和样例数据；使用 Schema 生成表单及通用结果页。</td></tr>
+<tr><td>从现有市场引入新的 Skill 或 MCP</td><td>市场与工具注册 UI</td><td>导入版本、设置凭据与权限、验证运行环境、在 Flow 绑定工具操作。通常只需配置。</td></tr>
+<tr><td>新增一种工具协议或模型提供方</td><td><code>adapters/</code> + 启动装配</td><td>实现对应端口与契约测试，登记配置 Schema、认证信息和能力标记，交给 Worker 调用。</td></tr>
+<tr><td>添加业务校验、写操作核验或专用结果</td><td><code>modules/&lt;feature-id&gt;/</code></td><td>注册节点处理器，定义业务状态与数据实体。会议室的房间选择、批量分项和外部编号属于这层。</td></tr>
+<tr><td>添加业务专用界面</td><td><code>apps/web/src/features/&lt;feature-id&gt;/</code></td><td>注册功能库入口、业务表单或结果组件。通用运行中心使用同一运行 ID 查进度与日志。</td></tr>
+<tr><td>新增通知渠道</td><td><code>adapters/notifications/</code></td><td>消费统一事件，转换渠道格式并记录投递结果。按 event_id 提供去重依据。</td></tr></table></div>
+<div class="card"><h2>模板清单示例 · 知识库周摘要</h2><div class="two"><div>
+<pre>id: knowledge-weekly-digest
+version: 1
+title: 知识库周摘要
+input_schema: input.schema.json
+result_schema: digest.schema.json
+workflow: flow.json
+tool_dependencies:
+  - slot: knowledge_lookup
+    kind: mcp
+    capability: search_docs
+    effect: read
+configuration:
+  model_ref: default
+  result_view: markdown
+triggers: [manual, schedule]</pre></div><div>
+<ol><li>从市场导入知识库 MCP，探测并选择已允许的文档查询操作。</li><li>复制摘要模板，填写查询范围、关键词、每周时间区间与输出要求，并将工具绑定到查询槽位。</li><li>顺序执行「查询文档 → 模型摘要 → 保存结果」。模型结构化输出标题、要点与来源列表。</li><li>手工试跑，核对来源与空结果。发布后可设为每周五运行；Hook 上线后订阅摘要完成事件。</li></ol>
+<p>现有 MCP 和通用 Markdown 结果组件满足要求时，新增模板文件即可。若需要知识来源筛选组件，再注册该模板专用页面。</p></div></div></div>
+<div class="card"><h2>模板发现、校验与升级</h2><ol><li>系统启动时登记内置模板清单。模板 ID 全局唯一，版本不可覆盖，清单声明所需节点类型和工具槽位。</li><li>用户从功能库实例化后得到 Flow 草稿。发布校验图、Schema、工具版本、权限、凭据引用及副作用策略。未绑定必需槽位时，页面指出缺失项。</li><li>新增版本可在同一环境并行测试。已有运行保留旧版本快照，计划切换前展示参数和权限变化。</li><li>用契约测试覆盖工具输入输出，用一条端到端用例覆盖创建、运行和结果展示。测试时将模型、市场及工具替换为可控服务。</li></ol>
+<button class="secondary" data-open-page="framework">查看前后端目录结构</button></div>
+</section>
+<section id="overview" class="page"><div class="hero"><div class="eyebrow" style="color:#aac9ff">LIGHTWEIGHT BY DESIGN</div><h2>一个入口，管理你的 AI 与自动化。</h2><p>自然语言表达意图，工作流约束执行；定时、手工、批量共享同一套任务引擎。</p><span class="pill">Docker / 虚机</span><span class="pill">Skill · MCP · CLI</span><span class="pill">可审计执行</span></div><div class="grid"><div class="card"><div class="label">首个业务场景</div><div class="metric">会议室预订</div><p>提示词驱动，计划可控。</p></div><div class="card"><div class="label">最小部署形态</div><div class="metric">2 个进程</div><p>管理服务 + 任务执行器。</p></div><div class="card"><div class="label">扩展核心</div><div class="metric">工作流模板</div><p>新增场景无需重写平台。</p></div></div><div class="two"><div class="card"><h2>产品边界</h2><p>面向个人的 Agent 任务控制台：集中管理模型、工具、业务模板、调度与结果。</p><ul><li>模型负责理解提示词与生成结构化参数。</li><li>工作流负责校验、分支、重试与结果确认。</li><li>工具适配层负责调用现有会议室 Skill。</li><li>平台保存配置与审计记录，不在首期重建会议室系统。</li></ul></div><div class="card"><h2>统一任务生命周期</h2><div class="step"><b>触发 → 排队</b>手工 / 定时 / 批量 / 后续 API</div><div class="step"><b>解析 → 校验 → 执行</b>明确资源、时间与授权边界</div><div class="step"><b>确认结果 → 记录 → 通知</b>成功、部分成功、失败、结果待确认</div></div></div></section>
+<section id="booking" class="page"><div class="note">以下配置和运行仅用于浏览器演示；不会连接模型或真实预订。保存只写入本机浏览器，不存储密钥。</div><br><div class="two"><div class="card"><h2>会议室预订计划</h2><label><input id="enabled" type="checkbox" checked> 启用此计划（关闭后禁止新触发，运行中任务单独取消）</label><label>计划名称<input id="plan" value="每周团队例会"></label><label>预订提示词<textarea id="prompt">为下周一上午 10:00–11:00 预订一个可容纳 8 人、带投屏的会议室，优先 A 座三层；没有符合条件的房间时通知我，不自动改时间。</textarea></label><div class="row"><label>触发方式<select id="mode"><option value="manual">手工执行</option><option value="scheduled">定时执行</option><option value="batch">批量执行</option></select></label><label>时区<select id="zone"><option>Asia/Shanghai</option><option>UTC</option></select></label></div><div id="schedule" hidden><label>每天触发时间<input id="time" type="time" value="09:00"></label><p>演示为每天触发；正式版支持每周、指定日期和 Cron，并预览下次触发时间。</p></div><div id="batch" hidden><label>批量目标日期（每行 YYYY-MM-DD）<textarea id="dates" placeholder="2026-11-23&#10;2026-11-30"></textarea></label><p>每个日期生成独立子任务；日期覆盖提示词中的相对日期，时间和房间条件沿用提示词。</p></div><label>执行策略<select id="policy"><option>先预览，确认后提交</option><option>校验通过后自动提交（预先授权）</option></select></label><button class="primary" id="preview">生成执行预览</button> <button class="secondary" id="save">保存演示配置</button><div id="result" role="status"></div></div><div><div class="card"><h2>预订的关键规则</h2><ul><li>以实际触发时间与配置时区解析“下周一”，同时保存解析基准。</li><li>缺少日期、时长或关键条件时进入待补充状态，不猜测提交。</li><li>正式提交前再次校验可用性；冲突时按明确的备选规则处理。</li><li>同一计划、目标时段和资源使用幂等键，防止重复预订。</li><li>写操作超时后先查询结果；无法确认则标记“待确认”，不盲目重试。</li><li>批量任务独立记录结果，仅重试明确失败的子任务。</li></ul></div><div class="card"><h2>运行记录示例</h2><table><tr><th>子任务</th><th>结果</th></tr><tr><td>11/23 · A301</td><td>成功 · 返回预订编号</td></tr><tr><td>11/30 · 待选房间</td><td>无可用房间</td></tr><tr><td>12/07 · A302</td><td>待确认 · 提交响应超时</td></tr></table><p>示例数据，不代表真实预订。</p></div></div></div></section>
+<section id="workflow" class="page"><div class="card"><h2>工作流：让 Agent 在明确边界内执行</h2><div class="architecture"><div class="node"><strong>01 触发</strong>手工 / Cron / 批量</div><div class="node"><strong>02 AI 解析</strong>提示词 → JSON Schema</div><div class="node"><strong>03 条件与审批</strong>参数校验 / 授权策略</div><div class="node"><strong>04 工具执行</strong>Skill / MCP / CLI</div><div class="node"><strong>05 结果处理</strong>持久化 / Hook</div></div><p style="margin-top:18px">首期使用表单配置有向无环图与 JSON 导入导出；可视化拖拽编辑器放到第二阶段。支持工具节点、模型节点、条件节点、人工确认节点、通知节点。</p></div><div class="two"><div class="card"><h2>调度语义</h2><ul><li>计划与执行实例分离，启停不删除历史记录。</li><li>调度器事务写入触发记录和任务；唯一键避免重启重复入队。</li><li>默认错过触发直接跳过，可配置补跑一次及过期窗口。</li><li>默认同计划不重叠；支持排队或跳过，限制批量并发。</li><li>保存 IANA 时区；夏令时重复时段默认只执行一次。</li></ul></div><div class="card"><h2>执行与恢复</h2><ul><li>Worker 领取任务后持有租约并发送心跳。</li><li>进程崩溃后回收过期租约；写操作先核对外部结果。</li><li>节点级超时、退避重试、最大步数和 Token 预算。</li><li>运行固定引用工作流、提示词和 Skill 版本。</li><li>取消停止后续节点；已完成外部预订需另行取消操作。</li></ul></div></div></section>
+<section id="integrations" class="page"><div class="grid"><div class="card"><h2>模型配置</h2><p>Provider 适配器 + 兼容接口。</p><ul><li>Base URL、模型名、密钥引用</li><li>连接测试、超时与预算</li><li>任务级模型覆盖</li><li>记录用量，敏感提示词脱敏</li></ul></div><div class="card"><h2>工具注册中心</h2><p>统一发现与调用协议。</p><ul><li>Skill：清单、说明、资源、版本</li><li>MCP：stdio / HTTP 适配</li><li>CLI：命令白名单与参数数组</li><li>工具输入输出 JSON Schema</li></ul></div><div class="card"><h2>消息与 Hook</h2><p>事件总线预留，后续启用。</p><ul><li>成功 / 失败 / 待审批事件</li><li>HTTP Webhook 与渠道适配器</li><li>HMAC 签名、时间戳、防重放</li><li>指数重试、死信、手工重投</li></ul></div></div><div class="card"><h2>配置管理界面范围</h2><table><tr><th>配置域</th><th>核心能力</th></tr><tr><td>模型与凭据</td><td>密钥独立加密存储，页面只显示掩码；备份与主密钥分离</td></tr><tr><td>Skill / MCP / CLI</td><td>安装登记、权限清单、版本锁定、健康检查、禁用与升级</td></tr><tr><td>工作流与计划</td><td>草稿、发布版本、启停、预览、历史回滚</td></tr><tr><td>执行记录</td><td>节点日志、工具输入输出摘要、错误分类、批量结果、脱敏导出</td></tr></table><p>不假定所有 Skill 有相同运行格式：首期接入已有会议室 Skill 时，明确其运行器、认证方式、输入输出和结果查询能力。</p></div></section>
+<section id="architecture" class="page"><div class="card"><h2>推荐架构 · 模块化单体 + 隔离执行</h2><div class="architecture"><div class="node"><strong>Web 控制台</strong>Vue 3 + TypeScript<br>静态资源由 API 服务托管</div><div class="node"><strong>管理服务</strong>FastAPI / REST<br>配置、鉴权、调度、审计</div><div class="node"><strong>Worker</strong>Agent 循环 / DAG 引擎<br>模型与工具适配器</div><div class="node"><strong>持久层</strong>SQLite WAL / 文件目录<br>配置、队列、状态、产物</div></div></div><div class="two"><div class="card"><h2>部署方案</h2><p><b>Docker Compose：</b>api + worker 两个容器，共享本机数据卷；首期单 Worker，通过数据库事务领取任务。SQLite 放本地磁盘，不放网络文件系统。</p><p><b>轻量虚机：</b>同一发布包，systemd 分别托管 API 与 Worker；无需容器也能运行。</p><p><b>资源估算：</b>外部模型 API 场景可从 1–2 vCPU / 1–2 GB 内存起步，需压测验证；浏览器自动化和本地模型另计。</p><p><b>扩容路径：</b>数据库切换 PostgreSQL，再按吞吐引入消息队列和多 Worker，保留工作流与工具协议。</p></div><div class="card"><h2>运行边界</h2><ul><li>默认仅本机或内网访问，远程访问配置 TLS 和登录鉴权。</li><li>执行器非 root，限制目录、网络、进程时间与资源。</li><li>不挂载 Docker socket；不把模型输出直接拼接成 shell。</li><li>API 和调度不能依赖网页持续打开。</li><li>数据库一致性备份、配置导出和恢复演练。</li><li>健康检查与磁盘、任务积压、失败率监控。</li></ul></div></div><div class="card"><h2>核心数据与接口</h2><p><code>WorkflowVersion</code> → <code>Schedule</code> → <code>Run</code> → <code>StepRun</code>；另设 <code>Tool</code>、<code>CredentialRef</code>、<code>BookingItem</code>、<code>EventOutbox</code>。</p><p>计划保存时区、触发规则、启停与补跑策略；运行保存版本快照、幂等键、租约、状态与错误；预订项保存外部编号及确认状态。</p><p><code>POST /runs</code> 手工触发 · <code>POST /runs/preview</code> 参数预览 · <code>POST /runs/{id}/approve</code> 确认执行 · <code>PATCH /schedules/{id}</code> 更新计划 · <code>GET /runs/{id}</code> 查看进度</p><p>任务结果和事件 Outbox 同事务写入；消息派发为至少一次投递，接收端通过 event_id 去重。</p></div></section>
+<section id="roadmap" class="page"><div class="grid"><div class="card"><span class="pill">阶段 1 · MVP</span><h2>平台与首个业务闭环</h2><p>单用户登录、模型配置、内置 Agent、基础 Flow 与市场接入、Skill/MCP/CLI 适配、执行日志、Docker 与虚机部署；会议室模板验证手工、定时和批量。</p><b>验收：</b><p>真实预订可查；重启不重复提交；停用计划不再触发；批量失败独立可见。</p></div><div class="card"><span class="pill">阶段 2 · 平台化</span><h2>丰富编排与业务模板</h2><p>扩展节点类型和编排能力，增加业务模板、工具细粒度权限与用量分析。</p><b>验收：</b><p>新增一个非预订业务模板，不修改调度和运行记录核心。</p></div><div class="card"><span class="pill">阶段 3 · 连接更多服务</span><h2>推送与规模扩展</h2><p>Webhook、消息渠道、失败重投、拖拽编排；按负载引入 PostgreSQL 和多执行节点。</p><b>验收：</b><p>通知故障不影响任务结果；重投可去重；任务可安全恢复。</p></div></div><div class="card"><h2>实施前需要对齐的接口</h2><p>已有会议室 Skill 的文件或接入规范、登录凭据方式、是否支持查询与取消、预订开放时间、批量数量上限，以及目标部署机器能否访问模型与会议室服务。</p><p>当前默认：个人单用户、外部模型 API、Asia/Shanghai 时区、一个管理实例与一个执行器。以上是设计假设，可按实际环境调整。</p></div></section><section id="journeys" class="page"><div class="hero"><div class="eyebrow">USER JOURNEYS</div><h2>从第一次配置，到无人值守运行</h2><p>设计目标：每个任务都有明确入口、可检查的执行计划、可解释的状态，以及失败后的下一步。</p></div><div class="card"><h2>角色、目标与默认假设</h2><table><tr><th>角色</th><th>关注点</th><th>设计回应</th></tr><tr><td>个人使用者</td><td>在一个工作台运行不同类型的个人任务</td><td>业务模板、最近输入、预览卡片、保存为计划</td></tr><tr><td>配置管理员（首期同一用户）</td><td>凭据有效、费用可控、机器稳定</td><td>连接测试、权限边界、用量、备份与健康状态</td></tr><tr><td>未来模板维护者</td><td>增加业务不用修改核心</td><td>版本化模板、工具契约、业务扩展模块、调试运行</td></tr></table><p>首期单用户，但所有业务数据保留 owner_id；不把多租户、团队权限或公开注册放进 MVP。</p></div><div class="card"><h2>旅程 01 · 首次启用（首次成功的最短路径）</h2><table><tr><th>阶段 / 页面</th><th>用户动作</th><th>系统反馈</th><th>失败与退出路径</th></tr><tr><td>部署 → 初始化向导</td><td>打开地址，设置管理员密码与时区</td><td>初始化完成后关闭公开初始化入口</td><td>数据目录不可写则给出目录与修复建议</td></tr><tr><td>模型接入</td><td>填写服务地址、模型、密钥</td><td>执行最小连接测试，展示延迟与错误摘要</td><td>认证失败可重填；允许保存草稿但不能运行 AI 节点</td></tr><tr><td>工具接入</td><td>登记现有会议室 Skill 与凭据引用</td><td>展示工具能力、权限和版本；执行只读探测</td><td>缺少依赖展示具体缺项，不使用真实预订做健康检查</td></tr><tr><td>安装预订模板</td><td>选择默认模型、时区与提交策略</td><td>模板就绪，显示“创建首次预订”入口</td><td>查询结果能力缺失时，明确写操作恢复限制</td></tr><tr><td>首次试运行</td><td>输入一句话 → 查看参数 → 确认</td><td>展示预订编号、房间与实际时段</td><td>失败定位到节点，可编辑参数重新生成新运行</td></tr></table><p>验收：首次配置后无需改代码即可发起任务；连接测试结果与实际预订结果在界面上明确分开。</p></div><div class="card"><h2>旅程 02 · 临时手工预订</h2><div class="architecture"><div class="node"><strong>表达需求</strong>“明天 14 点，8 人，1 小时，有投屏”</div><div class="node"><strong>解释与补全</strong>显示绝对日期、时区、人数、设备；缺少楼栋可按明确默认值</div><div class="node"><strong>选择与确认</strong>候选房间列表；提交前展示最终参数</div><div class="node"><strong>查看结果</strong>外部编号、时间、房间；保存为周期计划</div></div><p>预览通过并不锁房。确认时重新检查可用性；候选失效返回冲突页，可重新选择。确认令牌绑定预览版本、参数摘要、有效期和用户，防止确认后参数被悄悄替换。</p></div><div class="card"><h2>旅程 03 · 周期自动预订</h2><table><tr><th>步骤</th><th>需要解释的规则</th><th>页面表现</th></tr><tr><td>手工任务 → 保存为计划</td><td>区分触发时间与会议时间</td><td>“每周五 09:00 触发，为下周一 10:00 预订”分成两栏</td></tr><tr><td>设置时间与窗口</td><td>预订系统开放窗口、时区、节假日策略</td><td>展示未来 5 次触发及对应目标会议日期；节假日支持后置扩展</td></tr><tr><td>选择自动提交策略</td><td>限定房间范围、最大时长、批量上限</td><td>展示授权摘要；超出范围进入待确认</td></tr><tr><td>启用</td><td>启用不默认立即补跑</td><td>明确下次执行时间；另设“立即运行一次”</td></tr><tr><td>暂停 / 修改</td><td>暂停影响未来触发，修改创建新版本</td><td>显示运行中实例数量；对运行中实例单独操作</td></tr></table></div><div class="card"><h2>旅程 04 · 批量预订与部分失败</h2><p>选日期或粘贴日期列表 → 去重与检查 → 生成逐项预览 → 确认批次 → 分项执行 → 查看汇总。输入错误定位具体行；提交前显示有效项、无效项与总量，不静默丢弃错误日期。</p><table><tr><th>结果</th><th>用户看到什么</th><th>允许的操作</th></tr><tr><td>成功</td><td>房间、时段、外部编号</td><td>查看；若工具支持可发起取消工作流</td></tr><tr><td>明确失败</td><td>无房 / 凭据过期 / 参数不合法</td><td>修正后重试此项，保持原始记录</td></tr><tr><td>结果未知</td><td>已提交但响应超时</td><td>查询外部状态或人工确认；禁用直接重复提交</td></tr><tr><td>尚未执行</td><td>排队序号、限流原因</td><td>取消未开始项</td></tr></table><p>批量不是跨多个会议的原子事务；默认允许部分成功，不自动取消已成功项。若用户要求全成全败，需要工具提供可验证的补偿能力，否则明确不支持。</p></div><div class="two"><div class="card"><h2>旅程 05 · 定时失败后的处理</h2><p>收到失败事件 → 打开运行详情 → 定位失败节点 → 修复凭据或参数 → 创建关联重试运行 → 确认结果。错误提示同时提供原因、影响范围和可执行动作。</p><p>凭据失效可暂停相关计划；消息推送失败只影响通知，不把已经成功的预订改成失败。</p></div><div class="card"><h2>旅程 06 · 新增其他功能</h2><p>登记工具 → 编写输入 Schema → 创建工作流草稿 → 只读调试 → 设置写操作策略 → 发布模板 → 手工运行 → 添加计划。</p><p>未来示例：日报汇总、信息检索、资料整理。扩展可复用模型、执行器、计划、日志与通知。</p></div></div>
+<div class="card" id="tool-journeys"><h2>工具接入与工作流使用</h2>
+<p>路径：产品 UI 原型 → 配置中心 → 选择工具类型 → 填写并校验 → 在 Worker 环境测试 → 启用 → 绑定 Flow → 手工试运行 → 按需配置定时计划。</p>
+<button class="secondary" data-open-page="prototype" data-open-view="settings">打开配置中心原型</button></div>
+<div class="card" id="journey-model"><h2>模型与内置 Agent · 首次配置</h2><ol>
+<li>打开「配置中心 → 模型」，填写 API 类型、Base URL、模型 ID、凭据引用与超时，保存为默认模型。正式应用由 Worker 测试连接及任务所需的结构化输出或工具调用能力。</li>
+<li>打开 Flow 并选择执行方式。会议室模板使用固定工作流，模型负责提取预订条件，Worker 按节点执行。开放式任务可选择内置 Agent，由 Worker 运行模型和工具调用循环，执行工具权限、步数上限及审批规则。</li></ol>
+<p>Agent 执行器属于应用。模型提供推理，可以部署在外部或本地。Skill、MCP 和 CLI 提供任务工具；市场负责提供 Skill 包和 MCP 服务定义。</p></div>
+<div class="card" id="journey-market"><h2>市场接入旅程 · 从发现到启用</h2>
+<ol><li><b>连接自己的市场。</b>在「配置中心 → 市场来源」填写名称、服务地址和认证引用。Worker 与市场可能处在不同网络，分别检查目录访问、包下载和运行所需的网络。</li>
+<li><b>找条目、选版本。</b>按 Skill / MCP 分类检索。详情显示发布者、版本、运行依赖、权限、安装方式和版本信息。用户选定版本后生成草稿。</li>
+<li><b>导入。</b>Skill 下载指定版本的包，检查摘要与目录结构，存到 Worker 可读的版本目录。MCP HTTP 条目导入端点与协议配置。MCP stdio 条目导入运行清单，运行器或安装包按市场提供的方式准备。</li>
+<li><b>补齐本机配置。</b>填写凭据引用、确认网络与目录访问范围，交由 Worker 做只读探测或工具发现。探测通过后启用并绑定 Flow，先手工试看结果，再设置定时。</li>
+<li><b>更新。</b>新版并行导入、测试并发布为新工具版本；已有 Flow 和定时计划继续引用原版本，直至显式切换。市场暂不可达时保留已经安装的 Skill 和已保存的 MCP 配置。远程 MCP 的在线状态独立检查。</li></ol>
+<table><tr><th>接入边界</th><th>设计契约</th></tr><tr><td>市场来源配置</td><td>名称、目录地址、认证引用、支持类型、连接测试；按实际市场接口实现适配。</td></tr><tr><td>目录与版本</td><td>CatalogPort.search(kind, query)、get_version(item_id, version)。返回发布者、版本、摘要、权限和获取方式。</td></tr><tr><td>导入记录</td><td>保存 source_id、item_id、version、digest（制品可用时）、本机配置与验证结果。状态：草稿 → 获取中 → 待配置 → 待测试 → 已启用；失败显示原因和重试入口。</td></tr><tr><td>获取与校验</td><td>制品下载到暂存区。校验通过后再发布到版本目录。远程端点保存来源信息及工具发现时观察到的输入契约。</td></tr></table>
+<p>市场 API、认证方式和制品格式按你现有市场的接口确定。CLI 继续通过本机登记接入。</p></div>
+<div class="card" id="journey-skill"><h2>旅程 07 · 导入现有会议室 Skill</h2><ol>
+<li>在市场选择现有会议室 Skill 的版本导入，或在配置中心手工登记。确认名称、Worker 可读的目录、运行适配方式、版本和凭据引用。若采用 Agent Skills 目录格式，系统读取 <code>SKILL.md</code>，展示描述和可用资源。<a href="https://agentskills.io/specification">Agent Skills 规范</a></li>
+<li>根据实际 Skill 映射可用操作、输入字段与结果，例如将候选查询和提交分开。Worker 检查文件权限、运行时依赖与账号，优先使用只读查询测试。</li>
+<li>创建会议室 Flow，绑定 Skill 版本。将日期、时段、人数和设备映射到查询节点，将选中的房间和确认结果传给提交节点。</li>
+<li>手工运行时先核对候选与审批；定时自动提交须满足计划授权范围。缺文件时查 Worker 的挂载路径，凭据失效时更新引用，提交超时后先核验外部结果。</li>
+</ol></div>
+<div class="card" id="journey-mcp"><h2>旅程 08 · 连接 MCP 服务</h2><ol>
+<li>从市场导入服务定义或手工添加。Streamable HTTP 需核对端点和认证引用，stdio 需确认 Worker 内的可执行文件、独立参数和环境变量引用。<a href="https://modelcontextprotocol.io/specification/2025-06-18/basic/transports">MCP 传输规范</a></li>
+<li>从 Worker 发起连接测试，展示连接和工具发现结果。选择允许使用的工具，核对输入格式、访问范围和副作用。</li>
+<li>在 Flow 添加 MCP 工具节点，选择已启用服务及工具，例如「知识库 → 查询文档」，把上一步的关键词映射到工具输入。先手工运行，核对输出和错误记录，再启用定时计划。</li>
+<li>HTTP 连接失败时检查地址、网络和认证；stdio 失败时检查 Worker 内的路径、权限和依赖。工具消失或输入格式变化时重新发现、检查映射并发布新 Flow 版本。</li>
+</ol></div>
+<div class="card" id="journey-cli"><h2>旅程 09 · 登记并调用 CLI</h2><ol>
+<li>填写 Worker 内的绝对可执行路径、固定子命令、允许的参数、工作目录和超时。真实运行使用参数数组，按类型填充参数。</li>
+<li>使用版本探测或只读样例测试，检查退出码和输出。预先约定输出格式，例如 JSON；失败日志保留退出码及脱敏错误摘要。</li>
+<li>在 Flow 选择已登记的 CLI，例如「报告生成 → 生成摘要」，将前序节点的产物 ID 映射到明确的参数。Worker 校验该产物路径后执行，将 JSON 输出传给下一节点。</li>
+<li>工具缺失时补齐镜像或虚机依赖；参数错误时修订映射；输出格式变化时重新验证。写入文件的节点需限定可写目录。</li>
+</ol></div>
+<div class="card" id="journey-flow"><h2>旅程 10 · 从配置到发布 Flow</h2>
+<p>新增草稿 → 选择触发方式 → 添加模型或工具节点 → 映射输入与输出 → 设置审批及失败分支 → 用样例执行 → 发布版本 → 建立定时计划。</p>
+<p>以会议室为例，Flow 保存「怎么执行」，计划保存「什么时候执行、传什么参数」。修改工具版本或节点映射时发布新 Flow 版本，计划再选择是否切换。</p>
+</div>
+</section>
+<section id="pages" class="page"><div class="hero"><div class="eyebrow">INFORMATION ARCHITECTURE</div><h2>页面方案：从入口到异常状态</h2><p>下面描述正式产品的页面契约。当前 HTML 是设计文档，已有会议室页面提供局部交互演示。</p></div><div class="card"><h2>导航与路由地图</h2><table><tr><th>一级导航</th><th>路由</th><th>页面职责</th><th>主要动作</th></tr><tr><td>工作台</td><td>/dashboard</td><td>待办、近期执行、系统健康、下次计划</td><td>新建任务、处理待确认、查看失败</td></tr><tr><td>助手任务</td><td>/tasks/new · /tasks/:id</td><td>自然语言输入、任务预览、模板选择</td><td>解析、补充、确认、保存为计划</td></tr><tr><td>会议室</td><td>/bookings · /bookings/new</td><td>预订业务视图与批量结果</td><td>手工预订、批量导入、查询</td></tr><tr><td>工作流</td><td>/workflows · /workflows/:id/edit</td><td>模板、草稿、节点编排与版本</td><td>调试、发布、复制、回滚</td></tr><tr><td>定时计划</td><td>/schedules · /schedules/:id</td><td>触发规则、目标参数、执行策略</td><td>启停、立即执行、预览下次触发</td></tr><tr><td>运行中心</td><td>/runs · /runs/:id</td><td>实例、节点、产物、审计</td><td>筛选、取消、审批、关联重试</td></tr><tr><td>模型与工具</td><td>/settings/models · /tools</td><td>连接器、工具版本、运行环境</td><td>测试、登记、禁用、升级</td></tr><tr><td>通知与系统</td><td>/settings/hooks · /settings/system</td><td>通知渠道、存储、备份、时区</td><td>测试通知、导出、恢复指引</td></tr></table></div><div class="card"><h2>页面布局蓝图 · 工作台</h2><div class="wire"><div class="wirebar">顶部：全局搜索 / 新建任务 / 用户菜单</div><div class="grid"><div class="wirebox">需要你处理<br><b>待确认 / 待补充 / 结果未知</b></div><div class="wirebox">最近执行<br><b>成功率 / 失败 / 部分成功</b></div><div class="wirebox">接下来<br><b>未来 24 小时计划</b></div></div><div class="two"><div class="wirebox">近期运行列表<br>任务名称 · 触发来源 · 状态 · 耗时 · 查看详情</div><div class="wirebox">服务健康<br>模型 / Worker / 工具 / 数据存储</div></div></div><p>空状态：首次使用显示初始化清单；无运行历史显示示例提示词。加载失败保留导航和重试入口，不用“暂无数据”掩盖连接错误。</p></div><div class="card"><h2>页面布局蓝图 · 预订创建与预览</h2><div class="wire"><div class="wirebar">创建预订　① 输入需求　→　② 核对参数　→　③ 执行结果</div><div class="two"><div class="wirebox">左侧主区<br>模板选择 / 提示词 / 日期与时区 / 批量列表<br><br>结构化结果可编辑：日期、开始结束、人数、设备、楼栋</div><div class="wirebox">右侧摘要<br>目标时间与触发时间分开<br>候选房间 / 授权范围 / 预计任务数<br><br>主按钮：生成预览 → 确认提交</div></div></div><p>修改结构化参数后使旧确认失效，重新校验。模型解释作为辅助信息；实际提交参数始终使用结构化字段。按钮按状态改变，不把“生成预览”和“真实提交”放在同一动作里。</p></div><div class="card"><h2>页面布局蓝图 · 工作流编辑器</h2><div class="wire"><div class="wirebar">工作流名称 / 草稿版本 / 校验 / 调试 / 发布</div><div class="grid"><div class="wirebox">节点库<br>模型、工具、条件、人工确认、转换、通知</div><div class="wirebox">有序节点 / DAG<br>连线与分支<br>显示输入输出引用</div><div class="wirebox">属性面板<br>节点参数 / 输入映射<br>超时 / 重试 / 权限<br>输出 Schema</div></div><div class="wirebox">底部调试区：每一步输入 / 输出摘要 / 校验错误 / 用量</div></div><p>MVP 先以节点表单和顺序列表实现上述信息结构；任意循环、子工作流和拖拽画布后置。发布前检查无环、引用存在、输入类型、不可达节点、必需凭据及写操作授权。</p></div><div class="card"><h2>页面布局蓝图 · 运行详情</h2><div class="wire"><div class="wirebar">运行编号 / 状态 / 触发来源 / 开始时间 / 耗时 / 取消</div><div class="two"><div class="wirebox">执行时间线<br>参数解析 → 校验 → 查询 → 确认 → 提交 → 核验<br><br>选择节点查看结构化输入、输出、重试次数和错误</div><div class="wirebox">业务结果<br>预订编号 / 会议室 / 时间<br>批次成功、失败、未知数<br>关联原始运行与重试运行</div></div></div><p>节点日志默认脱敏；敏感字段不允许通过展开日志绕过。SSE 断线显示“重新连接中”，并通过序号补取；页面刷新可恢复到同一实例。</p></div><div class="card"><h2>字段与状态交互规范</h2><table><tr><th>页面</th><th>关键字段</th><th>校验 / 反馈</th></tr><tr><td>计划编辑</td><td>名称、版本、触发规则、时区、输入、补跑策略、并发策略</td><td>预览未来 5 次；非法 Cron 不可发布；关闭状态仍可保存草稿</td></tr><tr><td>模型配置</td><td>名称、地址、模型 ID、密钥引用、超时、预算</td><td>保存与测试分开；替换密钥需明确动作；空输入不清除旧密钥</td></tr><tr><td>工具详情</td><td>类型、版本、能力、参数 Schema、权限、环境</td><td>显示“已登记 / 可用 / 不健康 / 禁用”；升级不修改历史运行</td></tr><tr><td>Hook 编辑</td><td>URL、事件筛选、签名密钥引用、重试规则</td><td>测试使用专用测试事件；区分 HTTP 失败与业务失败</td></tr><tr><td>运行列表</td><td>时间、状态、模板、来源、关键词</td><td>筛选条件写入 URL；游标分页；空结果可一键清除筛选</td></tr></table></div><div class="two"><div class="card"><h2>通用交互标准</h2><ul><li>时间显示绝对日期和时区，悬停可显示 UTC。</li><li>危险操作显示影响范围；启停是可逆操作。</li><li>提交按钮防连点，后端仍需幂等保护。</li><li>表单离开前提示未保存修改。</li><li>键盘可操作，状态不只依赖颜色。</li><li>窄屏侧栏折叠，表格可横向滚动。</li></ul></div><div class="card"><h2>错误提示应该能指导行动</h2><p><b>不采用：</b>“任务失败，错误 500”。</p><p><b>建议：</b>“会议室凭据已过期，本次尚未提交。更新凭据后可重新运行。”</p><p><b>结果未知：</b>“请求已发出，但未收到确认。请先查询结果，避免重复预订。”</p><p>每条错误携带 error_code、request_id、可重试标记及下一步动作。</p></div></div></section>
+<section id="framework" class="page"><div class="hero"><div class="eyebrow">CODE FRAMEWORK</div><h2>代码框架：一套仓库，清晰的进程边界</h2><p>以下为建议的代码结构与契约示例，尚未创建可运行的后端。具体依赖版本在实施时锁定并验证。</p></div><div class="card"><h2>技术选型与替代边界</h2><table><tr><th>层</th><th>建议</th><th>选择原因 / 约束</th></tr><tr><td>Web</td><td>Vue 3 + TypeScript + Vite + Vue Router + Pinia</td><td>配置表单、路由和业务状态分离；UI 组件库按团队偏好选定</td></tr><tr><td>API</td><td>Python + FastAPI + Pydantic</td><td>输入契约和 OpenAPI；API 请求不承担长时任务</td></tr><tr><td>持久化</td><td>SQLAlchemy + Alembic + SQLite WAL</td><td>Repository 封装数据库差异；迁移版本随发布包管理</td></tr><tr><td>执行器</td><td>独立 Python Worker + 受约束 Agent Loop</td><td>复用模型与工具 SDK；工具子进程与 API 生命周期隔离</td></tr><tr><td>调度</td><td>调度循环 + Cron 解析库 + DB 去重</td><td>库负责计算时间，数据库负责可靠触发；不依赖内存任务列表</td></tr><tr><td>测试</td><td>pytest / 前端组件测试 / Playwright 场景测试</td><td>重点覆盖状态恢复、重复触发、真实页面闭环</td></tr></table></div><div class="card"><h2>建议仓库目录</h2><pre>robot-assist/
+├─ apps/
+│  ├─ web/
+│  │  ├─ src/
+│  │  │  ├─ app/                 # 路由、布局、启动
+│  │  │  ├─ features/
+│  │  │  │  ├─ onboarding/       # 初始化向导
+│  │  │  │  ├─ bookings/         # 创建、预览、批次结果
+│  │  │  │  ├─ workflows/        # 编辑、发布、版本
+│  │  │  │  ├─ schedules/        # 计划、启停、触发预览
+│  │  │  │  ├─ runs/             # 时间线、审批、日志
+│  │  │  │  └─ settings/         # 模型、工具、通知
+│  │  │  ├─ shared/api/          # 生成的 API 类型和客户端
+│  │  │  ├─ shared/ui/           # StatusBadge、TimeField 等
+│  │  │  └─ shared/lib/          # 时间格式化、错误映射
+│  │  └─ tests/
+│  └─ server/
+│     ├─ pyproject.toml
+│     ├─ src/assistant/
+│     │  ├─ entrypoints/         # api.py / worker.py
+│     │  ├─ api/                # routes、鉴权依赖、DTO
+│     │  ├─ application/        # 用例与事务边界
+│     │  │  ├─ create_run.py
+│     │  │  ├─ approve_run.py
+│     │  │  ├─ publish_workflow.py
+│     │  │  └─ reconcile_booking.py
+│     │  ├─ domain/             # 实体、状态机、业务规则
+│     │  ├─ ports/              # Repository / Model / Tool 接口
+│     │  ├─ runtime/            # DAG、Agent Loop、节点调度
+│     │  ├─ scheduler/          # 到期扫描、补跑、唯一触发
+│     │  ├─ adapters/
+│     │  │  ├─ persistence/     # ORM 与 repository 实现
+│     │  │  ├─ models/          # 模型服务适配器
+│     │  │  ├─ skills/          # 现有 Skill 运行器桥接
+│     │  │  ├─ mcp/             # MCP 连接、发现、调用
+│     │  │  ├─ cli/             # 子进程及参数白名单
+│     │  │  └─ notifications/   # Webhook 与渠道
+│     │  ├─ modules/bookings/   # 会议室专属输入与结果映射
+│     │  └─ infrastructure/     # 配置、加密、日志、时钟
+│     ├─ migrations/
+│     └─ tests/{unit,integration,contract}/
+├─ templates/                   # 每项功能独立的清单、Schema 和 Flow
+│  ├─ meeting-booking/
+│  └─ knowledge-weekly-digest/
+├─ deploy/                     # Dockerfile、Compose、systemd 示例
+├─ docs/                       # 架构决策、接口与运维说明
+└─ scripts/                    # 初始化、迁移、备份、恢复校验</pre><p>按业务能力组织前端，按依赖方向组织后端；避免一个巨大 services.py 或所有逻辑塞入 API 路由。</p></div><div class="two"><div class="card"><h2>前端组件拆分</h2><pre>BookingCreatePage
+ ├─ TemplateSelector
+ ├─ PromptEditor
+ ├─ BookingInputForm
+ ├─ BatchDateEditor
+ ├─ ParsedIntentReview
+ ├─ CandidateRoomList
+ └─ ExecutionPolicySummary
+
+RunDetailPage
+ ├─ RunHeader
+ ├─ StepTimeline
+ ├─ StepInspector
+ ├─ BookingResultTable
+ └─ ApprovalActionPanel</pre><p>页面负责组织；组合函数负责请求与轮询；组件负责呈现。运行状态以服务端为准，不用全局 Store 假装任务已经成功。</p></div><div class="card"><h2>配置与发布约定</h2><pre>ASSISTANT_DATABASE_URL
+ASSISTANT_DATA_DIR
+ASSISTANT_MASTER_KEY_FILE
+ASSISTANT_BIND_HOST
+ASSISTANT_DEFAULT_TIMEZONE
+ASSISTANT_WORKER_CONCURRENCY
+ASSISTANT_LOG_LEVEL</pre><p>环境变量仅承载部署级配置；模型、计划、工具等业务配置入库。主密钥从受限文件或 secret 挂载读取，不写进仓库或镜像。</p><p>CI：类型检查 → 单元/集成测试 → Web 构建 → 镜像构建 → 冒烟验证。数据库迁移只由一个启动步骤执行，API 与 Worker 不竞相迁移。</p></div></div><div class="card"><h2>扩展契约示例（伪代码）</h2><pre>class ToolPort(Protocol):
+    async def describe(self) -&gt; ToolManifest: ...
+    async def invoke(self, request: ToolRequest) -&gt; ToolResult: ...
+
+class ToolRequest:
+    tool_version: str
+    arguments: dict
+    run_id: str
+    step_id: str
+    idempotency_key: str
+    credential_ref: str
+    deadline: datetime
+
+class ToolResult:
+    status: Literal['succeeded', 'failed', 'unknown']
+    output: dict
+    external_reference: str | None
+    error_code: str | None
+
+class ModelPort(Protocol):
+    async def generate_structured(
+        self, messages, schema, budget
+    ) -&gt; ModelResult: ...</pre><p>适配器负责协议与结果归一化；权限、预算和审计由运行时统一执行。idempotency_key 传入工具不意味着外部系统一定支持幂等，必须在能力清单中声明支持程度。</p></div></section>
+<section id="codearch" class="page"><div class="hero"><div class="eyebrow">SOFTWARE ARCHITECTURE</div><h2>代码架构：核心规则不依赖具体工具</h2><p>采用模块化单体与端口适配器思路；先解决职责和状态，再根据真实负载拆服务。</p></div><div class="card"><h2>依赖方向与模块职责</h2><div class="architecture"><div class="node"><strong>入口层</strong>HTTP / 调度 / Worker CLI<br>验证身份与格式，调用用例</div><div class="node"><strong>应用层</strong>创建运行 / 审批 / 发布<br>事务、授权、协调领域对象</div><div class="node"><strong>领域层</strong>Run / Schedule / Policy<br>状态迁移、幂等、业务约束</div><div class="node"><strong>端口 ← 适配器</strong>数据库 / 模型 / 工具<br>通过依赖注入接入核心</div></div><p>核心 domain 不导入 FastAPI、数据库驱动或模型 SDK；application 依赖 domain 和 ports；adapters 实现 ports；entrypoints 负责装配。禁止 booking 模块直接操作调度器内存或绕过 ToolPort 执行命令。</p></div><div class="card"><h2>两类执行模式共用运行底座</h2><table><tr><th>模式</th><th>适用</th><th>边界</th></tr><tr><td>确定性工作流</td><td>会议室预订、定时批处理</td><td>节点和分支可预测；AI 只负责指定节点的理解或转换</td></tr><tr><td>受约束 Agent</td><td>需要多轮检索、工具选择的开放任务</td><td>工具白名单、最大轮数、预算、超时、写操作审批</td></tr></table><p>Agent 节点内部可以“模型 → 工具 → 模型”循环，但不能绕过权限守卫。首期预订优先用确定性工作流，避免让模型自由决定重复提交或更改会议时段。</p></div><div class="card"><h2>关键执行时序</h2><pre>用户 → API：POST /runs/preview（提示词、模板版本）
+API → DB：创建 preview 运行，保存输入及解析基准
+Worker → 模型：解析结构化意图
+Worker → Policy：校验参数、工具权限与预算
+Worker → Skill：只读查询候选房间
+Worker → DB：保存预览快照，状态 awaiting_approval
+API → 用户：返回候选、最终参数摘要与预览版本
+用户 → API：POST /runs/{id}/approve（预览版本）
+API → DB：原子校验版本、有效期、当前状态，入队
+Worker → Skill：再次查询可用性，提交预订
+Worker → Skill：核验外部编号与目标时段
+Worker → DB：结果 + 状态 + Outbox 事件同事务提交
+Dispatcher → Hook：异步推送，记录投递尝试</pre><p>若确认过期或资源变化，返回冲突并重新预览。自动计划在策略允许范围内跳过人工确认；不跳过参数和权限校验。</p></div><div class="two"><div class="card"><h2>运行状态机</h2><pre>queued → running
+running → awaiting_input → queued
+running → awaiting_approval → queued
+running → succeeded
+running → failed
+running → unknown → succeeded / failed
+running → cancel_requested → cancelled
+queued  → cancelled
+
+批次汇总：
+全部成功 → succeeded
+成功与失败混合 → partial_success
+存在未确认项 → needs_attention</pre><p>审批和补充输入不占用 Worker；恢复后从检查点继续。未知状态不是失败；只有核验结果后才能决定后续动作。</p></div><div class="card"><h2>权限与策略守卫</h2><pre>输入 → Schema 校验
+     → 用户与工具授权
+     → 允许的房间、时段、数量
+     → 凭据引用解析
+     → 超时、预算与并发检查
+     → 调用适配器
+     → 结果归一化与审计</pre><p>审批策略固定在运行快照中；紧急禁用工具是实时生效的全局限制。工具返回文本当作数据，不能覆盖系统权限或自动获得执行资格。</p></div></div><div class="card"><h2>核心数据模型</h2><table><tr><th>实体</th><th>关键字段</th><th>约束</th></tr><tr><td>workflow / workflow_version</td><td>owner_id, version, graph_json, input_schema, published_at</td><td>发布版本不可变；计划绑定具体版本</td></tr><tr><td>schedule</td><td>workflow_version_id, trigger_json, timezone, enabled, next_fire_at, revision</td><td>修改用乐观锁；绝对触发时间存 UTC</td></tr><tr><td>schedule_fire</td><td>schedule_id, scheduled_at, run_id</td><td>UNIQUE(schedule_id, scheduled_at)，防重复触发</td></tr><tr><td>run</td><td>owner_id, source, status, input_snapshot, policy_snapshot, lease_until, parent_run_id</td><td>客户端提交幂等键在用户作用域唯一</td></tr><tr><td>step_run</td><td>run_id, node_id, attempt, status, input_ref, output_ref, error_code</td><td>每次尝试单独记录；原始历史不覆盖</td></tr><tr><td>booking_item</td><td>run_id, target_start, target_end, room_id, external_id, status</td><td>保存稳定业务操作键；未知结果阻止自动重提</td></tr><tr><td>tool_version / credential</td><td>manifest, capabilities, digest / ciphertext, key_version</td><td>凭据只按引用使用，不嵌入工作流快照</td></tr><tr><td>event_outbox / delivery_attempt</td><td>event_id, payload, available_at / endpoint_id, status, next_retry</td><td>事件与业务同事务；按端点分别重试</td></tr><tr><td>audit_log</td><td>actor, action, resource_id, request_id, timestamp</td><td>记录发布、审批、密钥变更与手工核验</td></tr></table><p>索引优先覆盖 schedule(enabled,next_fire_at)、run(status,created_at)、run(owner_id,created_at)、event_outbox(status,available_at)。大型日志与产物存文件，数据库保存元数据和摘要。</p></div><div class="card"><h2>API 契约与错误语义</h2><table><tr><th>接口</th><th>语义</th><th>主要返回</th></tr><tr><td>POST /api/v1/runs/preview</td><td>异步预览，不做业务写操作</td><td>202 + run_id，前端跟踪状态</td></tr><tr><td>POST /api/v1/runs</td><td>按已发布工作流创建运行；接受 Idempotency-Key</td><td>202；同 key 同参数返回原运行，不同参数 409</td></tr><tr><td>POST /api/v1/runs/{id}/approve</td><td>确认指定预览版本</td><td>202；状态不符、版本变化或过期 409</td></tr><tr><td>POST /api/v1/runs/{id}/cancel</td><td>请求取消，不承诺撤回外部副作用</td><td>202 + 当前状态</td></tr><tr><td>POST /api/v1/runs/{id}/retry</td><td>新建关联运行，仅允许明确可重试项</td><td>202 + 新 run_id</td></tr><tr><td>GET /api/v1/runs/{id}/events</td><td>SSE 增量状态，支持事件序号恢复</td><td>text/event-stream；轮询作为回退</td></tr><tr><td>POST /api/v1/schedules/preview</td><td>计算规则下的未来触发时间</td><td>时间列表、时区、规则解释</td></tr><tr><td>POST /api/v1/workflows/{id}/publish</td><td>校验草稿并产生不可变版本</td><td>201 + version_id</td></tr></table><pre>{
+  "error": {
+    "code": "BOOKING_RESULT_UNKNOWN",
+    "message": "请求已提交，尚未确认外部结果",
+    "retryable": false,
+    "next_action": "reconcile",
+    "request_id": "req_example"
+  }
+}</pre><p>400/422 表示输入问题；401/403 表示身份与权限；409 表示状态冲突；429 表示限流。错误响应不包含凭据、内部堆栈或完整敏感提示词。</p></div><div class="card"><h2>工作流定义示例（设计 Schema）</h2><pre>{
+  "schema_version": 1,
+  "template": "meeting-booking",
+  "version": 1,
+  "nodes": [
+    {"id":"parse", "type":"model.structured", "output_schema":"booking-intent"},
+    {"id":"validate", "type":"booking.validate", "input":"parse.output"},
+    {"id":"search", "type":"tool", "tool_ref":"meeting-skill@1", "operation":"search"},
+    {"id":"approve", "type":"policy.approval"},
+    {"id":"reserve", "type":"tool", "tool_ref":"meeting-skill@1", "operation":"reserve", "retry":"reconcile_first"},
+    {"id":"verify", "type":"booking.reconcile"}
+  ],
+  "edges": [["parse","validate"],["validate","search"],
+            ["search","approve"],["approve","reserve"],["reserve","verify"]],
+  "limits": {"timeout_seconds":180, "max_model_turns":4}
+}</pre><p>search / reserve 是平台适配层的示例能力名，实施时映射到现有 Skill，不要求重写该 Skill。发布器需验证节点输入来源与输出 Schema，例子省略的字段不代表默认允许隐式数据传递。</p></div><div class="two"><div class="card"><h2>可靠调度伪代码</h2><pre>for schedule in find_due(now):
+    with transaction():
+        current = reload_with_revision(schedule)
+        if not current.enabled:
+            continue
+        fire_at = current.next_fire_at
+        if insert_fire_if_absent(current.id, fire_at):
+            create_run_from_version(current)
+        advance_next_fire(current, fire_at)
+
+# 入队与 next_fire_at 更新同事务
+# SQLite 用短写事务，禁止事务内调用网络
+# 多调度实例扩展时增加数据库级竞争控制</pre></div><div class="card"><h2>写操作恢复伪代码</h2><pre>operation = persist_intent_and_stable_key()
+if operation.has_external_reference:
+    return reconcile(operation)
+if operation.was_dispatched:
+    return reconcile_or_mark_unknown(operation)
+mark_dispatching_and_commit(operation)
+try:
+    result = await tool.reserve(operation)
+except Timeout:
+    return reconcile_or_mark_unknown(operation)
+persist_result_and_event(result)</pre><p>“标记已发送”与外部调用之间存在崩溃窗口；没有外部幂等或查询能力时，无法保证 exactly-once。系统选择可见的待确认状态，而非承诺绝对不重不漏。</p></div></div></section>
+<section id="delivery" class="page"><div class="hero"><div class="eyebrow">IMPLEMENTATION & OPERATIONS</div><h2>把设计变成可验收的开发任务</h2><p>按完整业务闭环切分工作，先确保任务可信，再增加编排自由度与界面复杂度。</p></div><div class="card"><h2>开发工作包与完成条件</h2><table><tr><th>工作包</th><th>交付内容</th><th>验收条件</th></tr><tr><td>基础工程</td><td>Web 布局、API、迁移、登录、配置装配、容器与虚机启动</td><td>全新数据目录可初始化；重启数据保留；健康检查区分存活与就绪</td></tr><tr><td>模型与工具</td><td>模型适配器、凭据引用、Skill 桥接、工具清单</td><td>模型返回非法结构可控失败；凭据不进入日志</td></tr><tr><td>运行核心</td><td>Run 状态机、节点、Worker 租约、执行日志</td><td>进程终止后能恢复；未知写操作不会盲目重试</td></tr><tr><td>预订闭环</td><td>解析、候选、审批、提交、查询、结果页</td><td>真实测试环境结果可核验；确认后参数不可被修改</td></tr><tr><td>计划与批量</td><td>Cron、时区、错过策略、分项结果、并发上限</td><td>重复扫描不重复入队；关闭计划有效；失败项独立处理</td></tr><tr><td>通用工作流</td><td>模板登记、表单编排、发布版本、MCP 与 CLI</td><td>新增业务模板无需修改调度器与运行中心</td></tr><tr><td>通知能力</td><td>Outbox、Webhook、签名、重试、投递日志</td><td>通知失败不改变业务成功状态；重投保持 event_id</td></tr></table></div><div class="card"><h2>关键验证矩阵</h2><table><tr><th>场景</th><th>预期结果</th></tr><tr><td>用户双击提交，或网络重试相同请求</td><td>返回同一个运行，不生成第二个有效提交</td></tr><tr><td>Worker 在提交后、写入结果前崩溃</td><td>通过外部查询恢复，或进入结果未知</td></tr><tr><td>API 在调度事务中重启</td><td>事务回滚或完整提交；同一触发时刻最多一个入队实例</td></tr><tr><td>暂停计划与到期扫描同时发生</td><td>事务内校验当前启用状态；已创建实例明确可见</td></tr><tr><td>审批时预览版本已改变</td><td>返回冲突，要求重新确认最新参数</td></tr><tr><td>批量 20 项中 3 项失败、1 项未知</td><td>逐项显示，失败可重试，未知需核验，成功项不重跑</td></tr><tr><td>工具输出包含指令或伪造授权</td><td>当作数据处理，不修改执行权限</td></tr><tr><td>Hook 连续返回错误</td><td>按策略重试后进入死信；任务结果保持不变</td></tr><tr><td>数据库备份恢复到新机器</td><td>迁移版本可识别，主密钥可用；恢复后计划先暂停并核验外部状态</td></tr></table></div><div class="two"><div class="card"><h2>运维与可观测性</h2><ul><li>日志关联 request_id、run_id、step_id、attempt。</li><li>观察排队时长、节点耗时、失败分类、未知结果数。</li><li>模型记录 Token 用量；费用仅在配置价格时估算。</li><li>存储保留策略可配置；删除日志不删除必需审计与外部编号。</li><li>升级前备份；数据库迁移不假设自动可逆。</li><li>恢复演练时禁用调度和通知，核对完成后再启用。</li></ul></div><div class="card"><h2>首期明确不做的内容</h2><ul><li>多租户计费、复杂组织权限与公开市场。</li><li>自建模型训练或本地模型集群调度。</li><li>任意代码执行平台和无限制 Agent。</li><li>跨多个预订的强事务承诺。</li><li>首期就引入 Kubernetes、分布式锁服务与复杂消息系统。</li></ul><p>这些边界用于控制开发规模；代码接口保留扩展能力。</p></div></div><div class="card"><h2>架构决策记录</h2><table><tr><th>决策</th><th>理由</th><th>重新评估条件</th></tr><tr><td>模块化单体</td><td>部署简单，统一事务，便于个人维护</td><td>独立扩容或故障隔离有明确需求</td></tr><tr><td>SQLite 起步</td><td>零数据库服务配置，支持轻量本机部署</td><td>多机 Worker、写竞争、数据规模持续增长</td></tr><tr><td>API 与 Worker 分进程</td><td>工具阻塞不会拖住管理页面</td><td>继续保留边界，可独立扩展 Worker</td></tr><tr><td>不可变工作流版本</td><td>运行可复现，计划行为可解释</td><td>不撤销；新增迁移和兼容策略</td></tr><tr><td>Outbox 预留</td><td>业务结果与通知事件不丢关联</td><td>接入外部消息系统后仍保留事务边界</td></tr></table></div></section>
+</main><script>
+const $=id=>document.getElementById(id);document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('nav button,.page').forEach(x=>x.classList.remove('active'));b.classList.add('active');$(b.dataset.page).classList.add('active');$('title').textContent=b.textContent;window.scrollTo(0,0);});function mode(){ $('schedule').hidden=$('mode').value!=='scheduled';$('batch').hidden=$('mode').value!=='batch';}$('mode').onchange=mode;const fields=['enabled','plan','prompt','mode','zone','time','dates','policy'];try{let d=JSON.parse(localStorage.getItem('orbit-design')||'null');if(d)fields.forEach(k=>{if(d[k]!==undefined){if(k==='enabled')$(k).checked=d[k];else $(k).value=d[k];}});mode();}catch(e){}$('save').onclick=()=>{let d={};fields.forEach(k=>d[k]=k==='enabled'?$(k).checked:$(k).value);try{localStorage.setItem('orbit-design',JSON.stringify(d));$('result').textContent='演示配置已保存在当前浏览器。未创建真实调度任务。';}catch(e){$('result').textContent='浏览器不允许本地保存；当前配置仍可预览。';}};$('preview').onclick=()=>{if(!$('enabled').checked){$('result').textContent='计划已关闭，请启用后预览。';return;}if(!$('prompt').value.trim()){ $('result').textContent='请填写预订提示词。';return;}let dates=$('dates').value.split(/\s+/).filter(Boolean);if($('mode').value==='batch'&&(!dates.length||dates.some(d=>!/^\d{4}-\d{2}-\d{2}$/.test(d)||isNaN(Date.parse(d))||new Date(d).toISOString().slice(0,10)!==d))){$('result').textContent='请填写有效的批量日期，格式 YYYY-MM-DD。';return;}$('result').textContent='演示预览 · '+$('plan').value+'\n触发：'+$('mode').selectedOptions[0].textContent+($('mode').value==='scheduled'?' / 每天 '+$('time').value+' / '+$('zone').value:'')+'\n子任务：'+($('mode').value==='batch'?new Set(dates).size:1)+'\n策略：'+$('policy').value+'\n下一步：调用模型解析参数 → 校验日期与可用性 → '+($('policy').selectedIndex===0?'等待确认':'按预授权提交')+'\n当前未调用模型，未生成真实预订。';};
+
+const viewButtons = document.querySelectorAll('[data-view]');
+function openProductView(view) {
+  document.querySelectorAll('.ui-panel').forEach(panel => {
+    panel.hidden = panel.id !== 'ui-' + view;
+  });
+  viewButtons.forEach(button => {
+    button.setAttribute('aria-pressed', String(button.dataset.view === view));
+  });
+}
+viewButtons.forEach(button => button.addEventListener('click', () => openProductView(button.dataset.view)));
+document.querySelectorAll('[data-open-view]').forEach(button => {
+  button.addEventListener('click', () => {
+    openProductView(button.dataset.openView);
+    if (button.dataset.openConfig) renderConfig(button.dataset.openConfig);
+  });
+});
+document.querySelectorAll('[data-open-page]').forEach(button => {
+  button.addEventListener('click', () => {
+    document.querySelector('nav button[data-page="' + button.dataset.openPage + '"]').click();
+    if (button.dataset.bookingMode) {
+      $('mode').value = button.dataset.bookingMode;
+      mode();
+    }
+    window.scrollTo(0, 0);
+  });
+});
+$('ui-preview').onclick = () => {
+  const empty = !$('ui-prompt').value.trim();
+  $('ui-preview-hint').textContent = empty ? '请先填写预订需求。' : '右侧展示固定样例，未解析输入文本。';
+  $('ui-preview-result').hidden = empty;
+  $('ui-preview-empty').hidden = !empty;
+};
+const nodeDescriptions = {
+  parse: '解析需求：使用配置的模型，把提示词转换为日期、时段、人数和设备条件。缺少必填字段时等待补充。',
+  search: '查询房间：调用会议室 Skill 的只读能力，按设备、人数和时段筛选。',
+  approval: '确认策略：人工确认最终参数。自动计划仅在预授权范围内继续。',
+  submit: '提交与核验：执行写操作并记录外部编号。响应超时后先查询结果。'
+};
+document.querySelectorAll('[data-node]').forEach(button => {
+  button.addEventListener('click', () => {
+    document.querySelectorAll('[data-node]').forEach(node => {
+      node.setAttribute('aria-pressed', String(node === button));
+    });
+    $('ui-node-detail').textContent = nodeDescriptions[button.dataset.node];
+  });
+});
+$('ui-plan-toggle').onclick = () => {
+  const toggle = $('ui-plan-toggle');
+  const paused = toggle.getAttribute('aria-pressed') !== 'true';
+  toggle.setAttribute('aria-pressed', String(paused));
+  toggle.textContent = paused ? '恢复' : '暂停';
+  $('ui-plan-status').textContent = paused ? '已暂停' : '已启用';
+};
+function showDemoRun(confirmed) {
+  $('ui-run-status').textContent = confirmed ? '模拟成功' : '待确认';
+  $('ui-run-status').className = confirmed ? 'chip green' : 'chip amber';
+  $('ui-run-step').textContent = confirmed ? '提交预订 · 模拟成功' : '提交预订 · 等待确认';
+  $('ui-confirm').disabled = confirmed;
+  $('ui-dash-status').textContent = $('ui-run-status').textContent;
+  $('ui-dash-status').className = $('ui-run-status').className;
+  $('ui-dash-pending').textContent = confirmed ? '0' : '1';
+}
+$('ui-confirm').onclick = () => showDemoRun(true);
+$('ui-reset').onclick = () => showDemoRun(false);
+
+const configSchemas = {
+  model: [
+    ['name', '显示名称', 'text', '默认模型'],
+    ['provider', 'API 类型', 'select', ['OpenAI 兼容 API']],
+    ['endpoint', 'Base URL（从 Worker 可访问）', 'url', 'https://example.test/v1'],
+    ['modelId', '模型 ID', 'text', 'example-model'],
+    ['credential', '凭据引用（选填）', 'text', 'model-api-key'],
+    ['timeout', '请求超时（秒）', 'number', '60']
+  ],
+  skill: [
+    ['name', 'Skill 名称', 'text', '会议室预订'],
+    ['path', 'Worker 内 Skill 目录', 'text', '/opt/orbit/skills/meeting-booking'],
+    ['version', '版本或内容摘要', 'text', 'v1'],
+    ['adapter', '运行适配方式', 'select', ['现有 Skill 运行器', '指令与资源']],
+    ['credential', '凭据引用（选填）', 'text', 'meeting-room-account']
+  ],
+  flow: [
+    ['name', 'Flow 名称', 'text', '会议室预订'],
+    ['trigger', '触发方式', 'select', ['手工', '定时计划', '手工或定时']],
+    ['executor', '执行方式', 'select', ['固定工作流', '内置 Agent']],
+    ['model', '模型', 'model', ''],
+    ['tool', '绑定工具配置', 'tool', ''],
+    ['mapping', '节点输入映射', 'text', 'parse.output.start → search.start'],
+    ['policy', '提交策略', 'select', ['写操作需确认', '按计划授权执行']]
+  ],
+  mcp: [
+    ['name', '服务名称', 'text', '知识库'],
+    ['transport', '传输方式', 'select', ['Streamable HTTP', 'stdio']],
+    ['endpoint', 'MCP 端点', 'url', 'https://example.test/mcp'],
+    ['command', 'Worker 内可执行文件', 'text', '/opt/orbit/bin/knowledge-mcp'],
+    ['args', '启动参数 JSON 数组', 'text', '[]'],
+    ['credential', '凭据引用（选填）', 'text', 'knowledge-account'],
+    ['operation', '允许使用的工具', 'text', 'search_docs']
+  ],
+  cli: [
+    ['name', 'CLI 名称', 'text', '报告生成'],
+    ['command', 'Worker 内可执行文件', 'text', '/opt/orbit/bin/report-tool'],
+    ['args', '固定参数 JSON 数组', 'text', '["summarize", "--format", "json"]'],
+    ['cwd', 'Worker 内工作目录', 'text', '/var/lib/orbit/work'],
+    ['timeout', '超时（秒）', 'number', '30']
+  ]
+};
+const configTitles = {model:'模型配置', skill:'Skill 配置', flow:'Flow 配置', mcp:'MCP 配置', cli:'CLI 配置'};
+const savedConfigs = new Map();
+let activeConfig = 'skill';
+
+function renderConfig(kind) {
+  activeConfig = kind;
+  $('config-title').textContent = configTitles[kind];
+  $('config-status').textContent = '';
+  document.querySelectorAll('[data-config]').forEach(button => {
+    button.setAttribute('aria-pressed', String(button.dataset.config === kind));
+  });
+  const fields = $('config-fields');
+  fields.replaceChildren();
+  $('market-panel').hidden = kind === 'model';
+  const draft = importedDrafts.get(kind);
+  const saved = draft?.fields ?? savedConfigs.get(kind);
+  const source = draft?.source ?? savedSources.get(kind);
+  $('config-source').hidden = !source;
+  $('config-source').textContent = source ? '来源：我的市场（演示） · ' + source : '';
+  for (const [name, caption, type, example] of configSchemas[kind]) {
+    const label = document.createElement('label');
+    label.textContent = caption;
+    let field;
+    if (['select', 'tool', 'model'].includes(type)) {
+      field = document.createElement('select');
+      if (type === 'tool') {
+        field.add(new Option('选择已保存的工具配置', ''));
+        for (const [key, data] of savedConfigs) {
+          if (['skill', 'mcp', 'cli'].includes(key)) field.add(new Option(configTitles[key] + ' · ' + data.name, key));
+        }
+      } else if (type === 'model') {
+        const model = savedConfigs.get('model');
+        field.add(new Option(model ? '默认 · ' + model.name : '默认 · 尚未配置', 'default'));
+        if (model) field.add(new Option('指定 · ' + model.name, 'model'));
+      } else {
+        for (const choice of example) field.add(new Option(choice));
+      }
+    } else {
+      field = document.createElement('input');
+      field.type = type;
+      field.value = example;
+      if (type === 'number') field.min = '1';
+    }
+    field.id = 'config-field-' + name;
+    field.name = name;
+    field.required = name !== 'credential';
+    if (saved?.[name] !== undefined) field.value = saved[name];
+    label.append(field);
+    fields.append(label);
+  }
+  if (kind === 'mcp') {
+    const transport = $('config-field-transport');
+    const update = () => {
+      const stdio = transport.value === 'stdio';
+      for (const name of ['endpoint', 'command', 'args']) {
+        const field = $('config-field-' + name);
+        field.disabled = name === 'endpoint' ? stdio : !stdio;
+        field.parentElement.hidden = field.disabled;
+      }
+      $('config-status').textContent = '';
+    };
+    transport.onchange = update;
+    update();
+  }
+}
+
+function checkDemoConfig() {
+  $('config-status').textContent = '';
+  if (activeConfig === 'flow' && !$('config-field-tool').value) {
+    $('config-status').textContent = '请先保存一项 Skill、MCP 或 CLI 演示配置，然后选择该工具。';
+    return null;
+  }
+  if (activeConfig === 'flow' && !savedConfigs.has('model')) {
+    $('config-status').textContent = '请先在「模型」保存一项演示配置。';
+    return null;
+  }
+  if (!$('tool-config').reportValidity()) return null;
+  const values = Object.fromEntries(new FormData($('tool-config')));
+  if (values.args !== undefined) {
+    let args;
+    try { args = JSON.parse(values.args); } catch {}
+    if (!Array.isArray(args) || args.some(value => typeof value !== 'string')) {
+      $('config-status').textContent = '参数须为 JSON 字符串数组，例如 ["--format", "json"]。';
+      return null;
+    }
+  }
+  return values;
+}
+
+function openJourney(id) {
+  document.querySelector('nav button[data-page="journeys"]').click();
+  $(id).scrollIntoView();
+}
+document.querySelectorAll('[data-journey]').forEach(button => {
+  button.addEventListener('click', () => openJourney(button.dataset.journey));
+});
+document.querySelectorAll('[data-config]').forEach(button => {
+  button.addEventListener('click', () => renderConfig(button.dataset.config));
+});
+$('config-journey').onclick = () => openJourney('journey-' + activeConfig);
+$('config-check').onclick = () => {
+  if (checkDemoConfig()) $('config-status').textContent = '表单校验通过。真实连接与执行测试由正式应用的 Worker 完成。';
+};
+$('tool-config').noValidate = true;
+$('tool-config').onsubmit = event => {
+  event.preventDefault();
+  const values = checkDemoConfig();
+  if (!values) return;
+  savedConfigs.set(activeConfig, values);
+  const draft = importedDrafts.get(activeConfig);
+  if (draft) {
+    savedSources.set(activeConfig, draft.source);
+    importedDrafts.delete(activeConfig);
+  }
+  $('config-status').textContent = '已保存到本次演示。' +
+    (activeConfig === 'model' ? '已设为演示默认模型。' : activeConfig === 'flow' ? '已记录执行方式、模型和工具绑定。' : '可以在 Flow 中绑定这项工具。') + '刷新页面会清除演示配置。';
+};
+
+const demoCatalog = [
+  {kind:'skill', id:'meeting-booking', name:'会议室预订', versions:['1.2.0','1.1.0'],
+   info:'Skill 包 · Worker 需可访问会议室系统', fields:{adapter:'现有 Skill 运行器',credential:''}},
+  {kind:'skill', id:'weekly-summary', name:'周报整理', versions:['1.0.0'],
+   info:'Skill 包 · 指令与资源', fields:{adapter:'指令与资源',credential:''}},
+  {kind:'mcp', id:'knowledge-search', name:'知识库查询', versions:['2.0.0','1.4.0'],
+   info:'远程 MCP · Streamable HTTP · 需要认证引用',
+   fields:{transport:'Streamable HTTP',endpoint:'https://example.test/mcp',credential:'',operation:'search_docs'}},
+  {kind:'mcp', id:'local-doc-search', name:'本地文档查询', versions:['1.0.0'],
+   info:'本地 MCP · stdio · 需在 Worker 安装运行器',
+   fields:{transport:'stdio',command:'/opt/orbit/bin/docs-mcp',args:'[]',credential:'',operation:'search_docs'}}
+];
+const importedDrafts = new Map();
+const savedSources = new Map();
+
+function updateMarketVersions() {
+  const chosen = demoCatalog.find(item => item.id === $('market-item').value);
+  const versionSelect = $('market-version');
+  versionSelect.replaceChildren();
+  for (const version of chosen?.versions ?? []) versionSelect.add(new Option(version));
+  $('market-info').textContent = chosen?.info ?? '没有匹配的示例条目。';
+  $('market-import').disabled = !chosen;
+}
+
+function filterMarket() {
+  const query = $('market-search').value.trim().toLowerCase();
+  const kind = $('market-kind').value;
+  const select = $('market-item');
+  select.replaceChildren();
+  for (const item of demoCatalog) {
+    if (item.kind === kind && (item.name + ' ' + item.id).toLowerCase().includes(query)) {
+      select.add(new Option(item.name + ' · ' + item.id, item.id));
+    }
+  }
+  updateMarketVersions();
+}
+
+$('market-kind').onchange = filterMarket;
+$('market-search').oninput = filterMarket;
+$('market-item').onchange = updateMarketVersions;
+$('market-import').onclick = () => {
+  const item = demoCatalog.find(entry => entry.id === $('market-item').value);
+  if (!item) return;
+  const version = $('market-version').value;
+  const fields = {...item.fields, name:item.name};
+  if (item.kind === 'skill') {
+    fields.version = version;
+    fields.path = '/opt/orbit/skills/' + item.id + '/' + version;
+  }
+  importedDrafts.set(item.kind, {fields, source:item.id + ' @ ' + version});
+  renderConfig(item.kind);
+  $('config-status').textContent = '已填入市场示例草稿。请核对本机配置后保存。';
+  $('config-title').scrollIntoView({block:'nearest'});
+};
+filterMarket();
+
+renderConfig('model');
+</script></body></html>
